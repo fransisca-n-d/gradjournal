@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GradJournal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+/* Layout idea: a one-page product site. Dark hero with a big search bar, sticky mega-nav, full-width bands alternating white / light grey / near-black, ending in a column footer. Single deliberate theme. */
+:root{
+  --black:#111111; --ink:#16181d; --muted:#5b616e; --line:#e3e5ea; --soft:#f4f5f7; --white:#ffffff;
+  --mint:#00d3a9; --mint-dark:#00876c; --deadline:#d6243a; --warn:#a86b00;
+  --font:"Plus Jakarta Sans","Segoe UI",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  color-scheme: light;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:72px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+html,body{margin:0}
+body{background:var(--white);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.55}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--mint);outline-offset:2px}
+.wrap{max-width:1200px;margin:0 auto;padding:0 24px}
+.visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+/* top bar + nav */
+.topbar{background:var(--black);color:#c9ccd3;font-size:13px}
+.topbar .wrap{display:flex;justify-content:space-between;gap:12px;padding-top:7px;padding-bottom:7px;flex-wrap:wrap}
+.topbar strong{color:#fff}
+header.nav{position:sticky;top:0;z-index:20;background:var(--white);border-bottom:1px solid var(--line)}
+header.nav .wrap{display:flex;align-items:center;gap:28px;height:64px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:19px;text-decoration:none;letter-spacing:-.01em;white-space:nowrap}
+.brand .mark{width:30px;height:30px;border-radius:8px;background:var(--black);display:grid;place-items:center}
+.brand .mark svg{width:18px;height:18px}
+.brand .bj{color:var(--mint-dark)} footer .brand .bj{color:var(--mint)}
+.menu{display:flex;gap:4px;flex:1;overflow-x:auto}
+.menu a{text-decoration:none;font-weight:600;font-size:15px;padding:8px 12px;border-radius:8px;white-space:nowrap}
+.menu a:hover{background:var(--soft)}
+.nav-right{display:flex;align-items:center;gap:10px}
+.counter{font-size:14px;font-weight:600;padding:8px 12px;border-radius:999px;background:var(--soft);white-space:nowrap;text-decoration:none}
+@media (max-width:860px){.nav-right{display:none}}
+
+/* buttons */
+.btn{font:inherit;font-weight:700;font-size:15px;border-radius:10px;padding:11px 20px;cursor:pointer;border:2px solid var(--ink);background:var(--white);color:var(--ink);text-decoration:none;display:inline-flex;align-items:center;gap:8px;line-height:1.2}
+.btn:hover{background:var(--soft)}
+.btn.primary{background:var(--black);color:#fff;border-color:var(--black)}
+.btn.primary:hover{background:#2a2c31}
+.btn.mint{background:var(--mint);border-color:var(--mint);color:var(--black)}
+.btn.mint:hover{background:#2be3bd}
+.btn.small{font-size:14px;padding:7px 12px;border-width:1.5px;border-radius:8px}
+.btn[aria-pressed="true"]{background:var(--black);color:#fff;border-color:var(--black)}
+.textlink{font-weight:700;text-decoration:underline;text-underline-offset:3px}
+
+/* hero */
+.hero{background:var(--black);color:#fff;padding:72px 0 64px;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;right:-120px;top:-120px;width:520px;height:520px;border-radius:50%;background:radial-gradient(circle,rgba(0,211,169,.28),rgba(0,211,169,0) 65%);pointer-events:none}
+.hero .wrap{position:relative;z-index:1;display:grid;grid-template-columns:1.25fr .75fr;gap:48px;align-items:center}
+@media (max-width:900px){.hero .wrap{grid-template-columns:1fr}}
+.kicker{display:inline-block;font-size:13px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--mint)}
+.hero h1{font-size:clamp(36px,5.6vw,64px);line-height:1.02;letter-spacing:-.03em;margin:12px 0 16px;font-weight:800;text-wrap:balance}
+.hero p.sub{font-size:19px;color:#c9ccd3;max-width:58ch;margin:0 0 26px}
+.search{display:flex;background:#fff;border-radius:12px;padding:6px;gap:6px;max-width:640px}
+.search input{flex:1;border:0;font:inherit;font-size:17px;padding:12px 14px;border-radius:8px;color:var(--ink);min-width:0}
+.search input:focus{outline:none}
+.search:focus-within{box-shadow:0 0 0 3px var(--mint)}
+.fine{font-size:13px;color:#9aa0ab;margin-top:12px}
+.trust{background:#1c1d21;border:1px solid #2c2e34;border-radius:16px;padding:22px}
+.trust .big{font-size:44px;font-weight:800;letter-spacing:-.02em;line-height:1;font-variant-numeric:tabular-nums}
+.trust .lbl{color:#c9ccd3;font-size:14px;margin:6px 0 14px}
+.trust .who{font-weight:700}
+.trust .row{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-top:1px solid #2c2e34;font-size:14px}
+.trust .row > span:last-child{font-family:var(--mono);color:var(--mint);white-space:nowrap}
+
+/* sections */
+section.band{padding:72px 0}
+section.band.grey{background:var(--soft)}
+section.band.dark{background:var(--black);color:#fff}
+.sec-head{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:26px}
+h2{font-size:clamp(28px,3.4vw,40px);line-height:1.1;letter-spacing:-.02em;margin:0;font-weight:800;text-wrap:balance}
+.sec-head p{margin:8px 0 0;color:var(--muted);max-width:62ch}
+.dark .sec-head p{color:#c9ccd3}
+h3{font-size:19px;line-height:1.25;margin:0;font-weight:800;text-wrap:balance}
+
+/* tabs */
+.tabbar{display:flex;gap:6px;border-bottom:2px solid var(--line);margin-bottom:22px;overflow-x:auto}
+.tabbar button{font:inherit;font-weight:700;font-size:16px;background:none;border:0;padding:12px 16px;cursor:pointer;color:var(--muted);border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap}
+.tabbar button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--mint-dark)}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}
+.tile{background:var(--white);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:8px;min-height:170px}
+.badge{align-self:flex-start;font-size:12px;font-weight:800;letter-spacing:.02em;padding:3px 9px;border-radius:6px;background:#e5faf5;color:var(--mint-dark)}
+.badge.red{background:#fde8eb;color:var(--deadline)}
+.badge.amber{background:#fff3dc;color:var(--warn)}
+.badge.dark{background:var(--black);color:#fff}
+.tile .when{font-family:var(--mono);font-size:22px;font-weight:500;letter-spacing:-.02em}
+.tile p{margin:0;color:var(--muted);font-size:14.5px}
+.tile .go{margin-top:auto;font-weight:700;font-size:14px}
+
+/* steps */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;counter-reset:s}
+@media (max-width:860px){.steps{grid-template-columns:1fr}}
+.step{background:#1c1d21;border:1px solid #2c2e34;border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:12px}
+.step .num{font-family:var(--mono);color:var(--mint);font-size:14px}
+.step p{margin:0;color:#c9ccd3}
+.step .vis{height:120px;border-radius:10px;background:#26282e;display:grid;place-items:center;padding:14px}
+.step .vis svg{width:100%;height:100%}
+
+/* university cards */
+.filters{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:20px}
+.filters input{font:inherit;border:1.5px solid var(--line);border-radius:10px;padding:10px 14px;min-width:240px;flex:1;max-width:380px}
+.chip{font:inherit;font-weight:600;font-size:14px;border:1.5px solid var(--line);background:var(--white);border-radius:999px;padding:7px 14px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--black);border-color:var(--black);color:#fff}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:18px}
+@media (max-width:420px){.grid{grid-template-columns:1fr}}
+.card{background:var(--white);border:1px solid var(--line);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:12px}
+.card.star{border:2px solid var(--black)}
+.card-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.city{font-size:14px;color:var(--muted)}
+.dates{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:5px}
+.dates li{display:grid;grid-template-columns:98px 1fr;gap:10px;font-size:14px}
+.dates .d{font-family:var(--mono);font-size:12.5px;padding-top:2px}
+.dates li.past{color:#9aa0ab} .dates li.past .d{text-decoration:line-through}
+.dates li.next .d{color:var(--deadline);font-weight:700}
+.facts{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;font-size:14px;margin:0;padding-top:10px;border-top:1px solid var(--line)}
+.facts dt{color:var(--muted)} .facts dd{margin:0}
+.note{font-size:14px;color:var(--muted);margin:0}
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:auto;padding-top:6px}
+.empty{color:var(--muted);padding:24px;border:1.5px dashed var(--line);border-radius:14px;text-align:center;background:var(--white)}
+
+/* stats band */
+.statgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+@media (max-width:860px){.statgrid{grid-template-columns:repeat(2,1fr)}}
+.statgrid .n{font-size:clamp(34px,4vw,52px);font-weight:800;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}
+.statgrid .n em{font-style:normal;color:var(--mint)}
+.statgrid p{margin:8px 0 0;color:#c9ccd3;font-size:15px}
+
+/* timeline */
+.tl-wrap{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:18px}
+.month{background:var(--white);border:1px solid var(--line);border-radius:16px;padding:18px}
+.month h3{font-size:16px;margin-bottom:10px}
+.tl{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.tl li{display:grid;grid-template-columns:62px 1fr;gap:10px;padding:9px 0;border-top:1px solid var(--line);font-size:14px}
+.tl li:first-child{border-top:0}
+.tl .d{font-family:var(--mono);font-size:13px}
+.tl li.soon .d{color:var(--deadline);font-weight:700}
+.tl li.past{color:#9aa0ab}
+.tl .u{font-weight:700;display:block}
+
+/* diary */
+.diary{display:grid;grid-template-columns:minmax(280px,380px) 1fr;gap:28px;align-items:start}
+@media (max-width:860px){.diary{grid-template-columns:1fr}}
+form.entry{background:var(--black);color:#fff;border-radius:16px;padding:22px;display:flex;flex-direction:column;gap:12px;position:sticky;top:84px}
+form.entry h3{color:#fff}
+form.entry label{font-size:13px;font-weight:700;color:#c9ccd3;display:flex;flex-direction:column;gap:5px}
+form.entry input,form.entry select,form.entry textarea{font:inherit;color:var(--ink);background:#fff;border:0;border-radius:8px;padding:10px 12px}
+textarea{min-height:120px;resize:vertical}
+.savebar{font-size:13px;color:#9aa0ab}
+.entries{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px}
+.entries li{background:var(--white);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+.entries .meta{display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:13.5px;color:var(--muted)}
+.entries .meta .d{font-family:var(--mono);color:var(--ink)}
+.entries p{margin:8px 0 0;white-space:pre-wrap}
+.linkbtn{background:none;border:none;color:var(--muted);font:inherit;font-size:13px;cursor:pointer;text-decoration:underline;margin-left:auto}
+.diary-tools{display:flex;gap:10px;margin-bottom:14px}
+.diary-tools select{font:inherit;border:1.5px solid var(--line);border-radius:10px;padding:9px 12px;background:#fff}
+
+/* checklist */
+.check{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.check li{background:var(--white);border:1px solid var(--line);border-radius:14px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start}
+.check input{margin-top:3px;width:20px;height:20px;accent-color:var(--mint-dark);flex:none}
+.check label{cursor:pointer;font-weight:700}
+.check .why{display:block;font-weight:400;font-size:14px;color:var(--muted)}
+.check li.done{background:#effcf8;border-color:#bfeee2}
+.check li.done label>span:first-child{text-decoration:line-through}
+.progress{height:10px;border-radius:999px;background:var(--line);overflow:hidden;min-width:220px}
+.progress div{height:100%;background:var(--mint-dark)}
+
+/* cta band + faq */
+.cta{background:var(--mint);color:var(--black);padding:44px 0}
+.cta .wrap{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
+.cta h2{font-size:clamp(24px,3vw,34px)}
+.faq{max-width:860px}
+.faq details{border-top:1px solid var(--line);padding:18px 0}
+.faq details:last-child{border-bottom:1px solid var(--line)}
+.faq summary{font-weight:800;font-size:18px;cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:16px}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";font-size:24px;line-height:1}
+.faq details[open] summary::after{content:"\2212"}
+.faq p{margin:10px 0 0;color:var(--muted);max-width:70ch}
+
+/* footer */
+footer{background:var(--black);color:#c9ccd3;padding:56px 0 30px;font-size:14px}
+.fcols{display:grid;grid-template-columns:1.4fr repeat(3,1fr);gap:28px}
+@media (max-width:760px){.fcols{grid-template-columns:1fr 1fr}}
+footer h4{color:#fff;font-size:15px;margin:0 0 12px}
+footer ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+footer a{text-decoration:none} footer a:hover{text-decoration:underline;color:#fff}
+.legal{border-top:1px solid #2c2e34;margin-top:36px;padding-top:18px;color:#9aa0ab;font-size:13px}
+</style>
+</head>
+<body>
+<div class="topbar"><div class="wrap"><span>Planning for <strong>September 2027 entry</strong> · facts checked 9 Nov 2026</span><span id="todayLine"></span></div></div>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="#top"><span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#00d3a9" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2 9 2 12 0v-5"/></svg></span><span>Grad<span class="bj">Journal</span></span></a>
+    <nav class="menu" aria-label="Main">
+      <a href="#first-up">First up</a>
+      <a href="#universities">Universities</a>
+      <a href="#timeline">Timeline</a>
+      <a href="#diary">My diary</a>
+      <a href="#checklist">Documents</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <div class="nav-right">
+      <a class="counter" href="#universities" id="navStar">★ 0 shortlisted</a>
+      <a class="btn primary small" href="#diary">Write entry</a>
+    </div>
+  </div>
+</header>
+
+<section class="hero" id="top">
+  <div class="wrap">
+    <div>
+      <span class="kicker">UK taught master's · 30 universities</span>
+      <h1>Every deadline for your UK master's, in one place.</h1>
+      <p class="sub">Application rounds, final dates, fees and deposits for 30 top UK universities, plus a diary to log your application journey from first shortlist to offer.</p>
+      <form class="search" id="heroSearch" role="search">
+        <label class="visually-hidden" for="heroQ">Search universities</label>
+        <input id="heroQ" type="search" placeholder="Search a university or city, e.g. Edinburgh" autocomplete="off">
+        <button class="btn mint" type="submit">Search</button>
+      </form>
+      <div class="fine">Each course can set an earlier deadline than its university. Confirm on the official course page before you apply.</div>
+    </div>
+    <aside class="trust" aria-label="Coming up">
+      <div class="big" id="heroDays">—</div>
+      <div class="lbl">days until the next deadline on the list</div>
+      <div id="heroNext"></div>
+    </aside>
+  </div>
+</section>
+
+<section class="band grey" id="first-up">
+  <div class="wrap">
+    <div class="sec-head"><div><h2>What's first up for your application?</h2><p>The dates and universities to look at now.</p></div></div>
+    <div class="tabbar" role="tablist" aria-label="First up">
+      <button role="tab" aria-selected="true" data-tab="soon" id="tab-soon">Next 60 days</button>
+      <button role="tab" aria-selected="false" data-tab="star" id="tab-star">My shortlist</button>
+      <button role="tab" aria-selected="false" data-tab="rolling" id="tab-rolling">Rolling: apply early</button>
+      <button role="tab" aria-selected="false" data-tab="money" id="tab-money">Scholarship dates</button>
+    </div>
+    <div class="tiles" id="tiles" role="tabpanel"></div>
+  </div>
+</section>
+
+<section class="band dark" id="how">
+  <div class="wrap">
+    <div class="sec-head"><div><h2>Three steps from shortlist to offer</h2><p>How to use this site through the 2026–27 application cycle.</p></div></div>
+    <div class="steps">
+      <div class="step"><div class="vis" aria-hidden="true"><svg viewBox="0 0 200 90"><rect x="8" y="10" width="56" height="70" rx="8" fill="#33363d"/><rect x="72" y="10" width="56" height="70" rx="8" fill="#00d3a9"/><rect x="136" y="10" width="56" height="70" rx="8" fill="#33363d"/><path d="M90 45l7 7 14-15" stroke="#111" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="num">01</span><h3>Build a shortlist</h3><p>Star universities on their cards. The shortlist tab and timeline then show only your picks.</p><a class="textlink" href="#universities">Browse universities</a></div>
+      <div class="step"><div class="vis" aria-hidden="true"><svg viewBox="0 0 200 90"><line x1="10" y1="45" x2="190" y2="45" stroke="#33363d" stroke-width="4"/><circle cx="40" cy="45" r="9" fill="#5b616e"/><circle cx="100" cy="45" r="12" fill="#00d3a9"/><circle cx="160" cy="45" r="9" fill="#33363d" stroke="#5b616e" stroke-width="3"/></svg></div><span class="num">02</span><h3>Beat the deadlines</h3><p>Rounds, funding deadlines and final dates in one timeline, with anything within 30 days in red.</p><a class="textlink" href="#timeline">See the timeline</a></div>
+      <div class="step"><div class="vis" aria-hidden="true"><svg viewBox="0 0 200 90"><rect x="40" y="8" width="120" height="74" rx="8" fill="#33363d"/><rect x="54" y="22" width="70" height="7" rx="3" fill="#00d3a9"/><rect x="54" y="38" width="92" height="6" rx="3" fill="#5b616e"/><rect x="54" y="52" width="80" height="6" rx="3" fill="#5b616e"/><rect x="54" y="66" width="56" height="6" rx="3" fill="#5b616e"/></svg></div><span class="num">03</span><h3>Log every step</h3><p>Write dated diary entries for drafts, submissions, interviews and offers. They're saved on this page.</p><a class="textlink" href="#diary">Open my diary</a></div>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="universities">
+  <div class="wrap">
+    <div class="sec-head"><div><h2>30 universities, compared</h2><p>How each one runs deadlines, key 2027 dates, fees and deposits, with links to its full list of taught master's courses.</p></div></div>
+    <div class="filters">
+      <label class="visually-hidden" for="q">Filter universities</label>
+      <input type="search" id="q" placeholder="Filter by name or city">
+      <span id="sysFilter" role="group" aria-label="Deadline system"></span>
+      <button class="chip" id="starOnly" aria-pressed="false" type="button">★ Shortlist only</button>
+    </div>
+    <div class="grid" id="uniGrid"></div>
+  </div>
+</section>
+
+<section class="band dark" id="numbers">
+  <div class="wrap">
+    <div class="statgrid" id="statgrid"></div>
+  </div>
+</section>
+
+<section class="band grey" id="timeline">
+  <div class="wrap">
+    <div class="sec-head"><div><h2>Deadline timeline</h2><p>Every dated item from the university cards, month by month. Red means within 30 days.</p></div>
+      <div class="filters" style="margin:0"><button class="chip" id="tlStar" aria-pressed="false" type="button">★ Shortlist only</button><button class="chip" id="tlPast" aria-pressed="false" type="button">Show past dates</button></div></div>
+    <div class="tl-wrap" id="tlList"></div>
+  </div>
+</section>
+
+<section class="band" id="diary">
+  <div class="wrap">
+    <div class="sec-head"><div><h2>My application diary</h2><p>A dated log of the journey: research, statements, submissions, interviews and offers.</p></div></div>
+    <div class="diary">
+      <form class="entry" id="entryForm">
+        <h3>New entry</h3>
+        <label for="eDate">Date<input type="date" id="eDate" required></label>
+        <label for="eUni">University<select id="eUni"><option value="">General</option></select></label>
+        <label for="eKind">Type<select id="eKind">
+          <option>Research</option><option>Writing</option><option>Applied</option><option>Interview</option><option>Offer</option><option>Rejected</option><option>Funding</option><option>Note</option>
+        </select></label>
+        <label for="eText">What happened?<textarea id="eText" required placeholder="e.g. Finished the first draft of my personal statement for Edinburgh."></textarea></label>
+        <button class="btn mint" type="submit">Add to diary</button>
+        <div class="savebar" id="saveState" aria-live="polite"></div>
+      </form>
+      <div>
+        <div class="diary-tools">
+          <label class="visually-hidden" for="dFilter">Filter diary</label>
+          <select id="dFilter"><option value="">All entries</option></select>
+        </div>
+        <ul class="entries" id="entries"></ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band grey" id="checklist">
+  <div class="wrap">
+    <div class="sec-head"><div><h2>Documents checklist</h2><p>What most UK taught master's applications ask for. Tick items off as they're ready.</p></div>
+      <div><div id="checkCount" style="font-weight:700;margin-bottom:6px"></div><div class="progress"><div id="checkBar" style="width:0"></div></div></div></div>
+    <ul class="check" id="checkList"></ul>
+  </div>
+</section>
+
+<section class="cta">
+  <div class="wrap">
+    <h2>Don't miss the next round.</h2>
+    <a class="btn primary" href="#timeline">See all deadlines</a>
+  </div>
+</section>
+
+<section class="band" id="faq">
+  <div class="wrap">
+    <div class="sec-head"><div><h2>Common questions</h2></div></div>
+    <div class="faq">
+      <details open><summary>What's the difference between rounds, course deadlines and rolling admissions?</summary><p>Rounds (Imperial, Glasgow, Edinburgh's Business School) split the year into windows, each with its own closing and decision date. Course deadlines (Oxford, Cambridge, UCL, King's) are fixed dates set per course. Rolling admissions (LSE, Manchester, Newcastle) have no real deadline: courses close once they're full, so applying early matters most there.</p></details>
+      <details><summary>When should I apply for September 2027?</summary><p>For the most competitive courses, between now and January 2027. Cambridge funding deadlines fall on 8 December 2026 for many courses, and Imperial advises applying within its first four rounds. Universities with a single final date in July or August still fill popular courses early, and visa applicants need extra time.</p></details>
+      <details><summary>How much do applications cost?</summary><p>Application fees range from nothing (Birmingham, Cardiff, Newcastle) to about £75 (Warwick). After an offer, international students usually pay a tuition deposit of £2,000–£4,500 before getting a CAS for the visa.</p></details>
+      <details><summary>What are CAS and ATAS?</summary><p>A CAS (Confirmation of Acceptance for Studies) is the reference number your university issues once you've accepted an offer and paid any deposit; you need it to apply for a UK Student visa. ATAS is a security clearance some science and engineering subjects need for certain nationalities; apply only after you get an offer.</p></details>
+      <details><summary>How many courses can I apply to?</summary><p>There's no UK-wide limit for master's, but some universities set their own: UCL allows two taught courses per cycle, Imperial one form with up to two courses, and Glasgow one application per programme each year.</p></details>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="fcols">
+      <div><a class="brand" href="#top" style="color:#fff"><span class="mark" aria-hidden="true" style="background:#26282e"><svg viewBox="0 0 24 24" fill="none" stroke="#00d3a9" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2 9 2 12 0v-5"/></svg></span><span>Grad<span class="bj">Journal</span></span></a><p style="max-width:34ch">A personal planner for UK taught master's applications, September 2027 entry.</p></div>
+      <div><h4>Plan</h4><ul><li><a href="#first-up">First up</a></li><li><a href="#universities">Universities</a></li><li><a href="#timeline">Timeline</a></li></ul></div>
+      <div><h4>Track</h4><ul><li><a href="#diary">My diary</a></li><li><a href="#checklist">Documents</a></li></ul></div>
+      <div><h4>Help</h4><ul><li><a href="#faq">FAQ</a></li><li><a href="https://www.gov.uk/student-visa" target="_blank" rel="noopener">UK Student visa (GOV.UK) ↗</a></li></ul></div>
+    </div>
+    <div class="legal">University facts come from each university's admissions pages where available, and from application-guide sites (marked "guide site") where not. Deadlines change; confirm on the official course page before applying.</div>
+  </div>
+</footer>
+
+<script type="application/json" id="state">{"entries":[{"id":"e1","date":"2026-11-09","uni":"","kind":"Note","text":"Started this journal. Looking at UK universities for September 2027 entry and building a shortlist."}],"shortlist":[],"checked":{}}</script>
+
+<script>
+(function(){
+"use strict";
+const PRISTINE = (function(){
+  const root = document.documentElement.cloneNode(true);
+  root.removeAttribute("data-theme");
+  return "<!DOCTYPE html>\n" + root.outerHTML;
+})();
+
+const UNIS = [
+ {id:"oxford",name:"University of Oxford",city:"Oxford",sys:"fixed",
+  dates:[["2026-12-02","Oxford Dept of International Development: first deadline (12:00 UK)"],["2027-01-05","Example course deadline: MPhil English Studies (12:00 UK)"],["2027-01-26","ODID MSc deadline, e.g. Migration Studies (12:00 UK)"]],
+  facts:{"Deadlines":"Set per course; checked courses close 13 Nov 2026 to 26 Jan 2027, all at 12:00 midday UK","Scholarships":"Clarendon has no separate date: apply by your course deadline","Application limit":"Last cycle: up to 3 applications, only 2 of them taught courses"},
+  note:"Applications missing required documents are not normally assessed.",
+  links:[["Graduate courses","https://www.ox.ac.uk/admissions/graduate"],["Deadline source (guide site)","https://gradpilot.com/news/oxford-cambridge-masters-deadlines-2027"]]},
+ {id:"cambridge",name:"University of Cambridge",city:"Cambridge",sys:"fixed",
+  dates:[["2026-12-08","Funding deadline for many courses (23:59 UK)"],["2027-01-06","Funding deadline for some other courses"],["2027-02-02","MPhil Economics / Public Policy deadline"],["2027-02-25","Example final course deadline"]],
+  facts:{"Deadlines":"Each course has its own deadline plus an earlier funding deadline","Academic":"Typically a good 2:1 (UK) or equivalent","Application fee":"Applies to some courses"},
+  note:"Apply by the funding deadline if you want scholarship consideration (Gates, Cambridge Trust). Over 300 postgraduate courses in the Course Directory.",
+  links:[["Course Directory","https://www.postgraduate.study.cam.ac.uk/courses"],["Deadline source (guide site)","https://gradpilot.com/news/oxford-cambridge-masters-deadlines-2027"]]},
+ {id:"imperial",name:"Imperial College London",city:"London",sys:"rounds",
+  dates:[["2026-09-30","Applications opened"],["2027-01-06","Round 2 closes (decision by 3 Mar)"],["2027-03-10","Round 3 closes (decision by 5 May)"],["2027-04-28","Round 4 closes (decision by 1 Jul)"],["2027-06-16","Round 5 closes, optional (Computing)"],["2027-08-18","Round 6 closes, non-visa nationals only (Computing)"]],
+  facts:{"Advice":"Apply within the first 4 rounds; later rounds may have no places","Academic":"Electrical Eng.: typical offer is a First (UK)","Application fee":"Yes, for master's programmes","Application limit":"One form per year, up to two courses"},
+  note:"Round dates shown are from Electrical Engineering and Computing pages; other departments may differ.",
+  links:[["Postgraduate admissions help","https://www.imperial.ac.uk/study/help-centre/postgraduate-admissions/"],["Computing rounds","https://www.imperial.ac.uk/computing/prospective-students/pg/"],["EEE rounds","https://www.imperial.ac.uk/electrical-engineering/study/postgraduate/applying/"]]},
+ {id:"lse",name:"London School of Economics (LSE)",city:"London",sys:"rolling",
+  dates:[["2026-10-07","2027/28 cycle opened"],["2027-04-30","Graduate Financial Support form runs until April 2027"]],
+  facts:{"Deadlines":"Mostly rolling: a programme closes once places are filled","Decision time":"About 8 weeks for taught master's","References":"Not processed until every referee has replied"},
+  note:"The 'Available programmes' page shows which programmes are still open or closed for 2027/8.",
+  links:[["Available programmes 2027/8","https://www.lse.ac.uk/study-at-lse/Graduate/Available-programmes"],["When to apply","https://www.lse.ac.uk/study-at-lse/graduate/prospective-students/how-to-apply/when-to-apply"]]},
+ {id:"ucl",name:"University College London (UCL)",city:"London",sys:"fixed",
+  dates:[["2026-09-16","2027/28 Graduate Prospectus published"]],
+  facts:{"Deadlines":"Listed on each course's prospectus page; some close earlier for visa applicants","Application limit":"Maximum two taught courses per cycle","Application fee":"Standard fee for most taught courses (per application)","Deferral":"Not accepted for taught courses"},
+  note:"Example from last cycle: Statistical Science closed to visa applicants in late March.",
+  links:[["Taught degrees 2027/28","https://www.ucl.ac.uk/prospective-students/graduate/find-your-course"],["Step-by-step guide","https://www.ucl.ac.uk/prospective-students/graduate/taught-degrees/how-apply-step-step-guide"]]},
+ {id:"kcl",name:"King's College London",city:"London",sys:"fixed",
+  dates:[],
+  facts:{"Deadlines":"Vary by course: see 'Entry requirements' on each course page","Application fee":"Most taught courses charge a non-refundable fee","Decision time":"Aims for 4–8 weeks; some courses use a gathered field","Deferral":"Not allowed for taught courses"},
+  note:"Funding and scholarship deadlines can be earlier than the course deadline. A deposit is required when accepting most offers.",
+  links:[["How to apply (taught)","https://www.kcl.ac.uk/study/postgraduate-taught/how-to-apply"],["Important information","https://www.kcl.ac.uk/study/postgraduate-taught/how-to-apply/important-information-for-applying"]]},
+ {id:"edinburgh",name:"University of Edinburgh",city:"Edinburgh",sys:"rounds",
+  dates:[["2026-09-07","Business School applications opened"],["2026-12-09","Business School round 2 deadline"],["2027-04-21","Business School round 4 deadline"],["2027-06-09","Round 5: recommended final date for visa applicants (Business Analytics)"]],
+  facts:{"Deadlines":"Each programme sets its own; many use selection deadlines or rounds","Advice":"Apply at least a month before your programme's deadline","Application fee":"Some programmes; must be paid by the round deadline"},
+  note:"Science & Engineering lists its programme-by-programme deadlines on one page.",
+  links:[["Science & Engineering deadlines","https://science-engineering.ed.ac.uk/studying/postgraduate/taught-postgraduate/application-and-selection-deadlines"],["Business School selection rounds","https://www.business-school.ed.ac.uk/msc/selection-admissions-strategy"]]},
+ {id:"manchester",name:"University of Manchester",city:"Manchester",sys:"rolling",
+  dates:[],
+  facts:{"Deadlines":"No official closing date for most taught courses","Advice":"Apply as early as possible","Application fee":"£60 for master's (guide site)"},
+  note:"Some courses, especially the Business School, close earlier or use rounds.",
+  links:[["Postgraduate application process","https://www.manchester.ac.uk/study/international/admissions/postgraduate-application-process/"]]},
+ {id:"warwick",name:"University of Warwick",city:"Coventry",sys:"final",
+  dates:[["2027-08-02","On-time deadline for taught courses starting Sept/Oct 2027"]],
+  facts:{"Academic":"Usually a 2:1 or international equivalent","Application fee":"£75 assessment fee for taught courses","References":"Usually one academic reference"},
+  note:"Popular courses (e.g. WMG, Business School) can close well before the deadline once full.",
+  links:[["Taught course information","https://warwick.ac.uk/study/postgraduate/courses/template-taught/"],["WMG entry advice","https://warwick.ac.uk/fac/sci/wmg/education/wmgmasters/entry/"]]},
+ {id:"bristol",name:"University of Bristol",city:"Bristol",sys:"fixed",
+  dates:[["2026-09-17","2027 admissions statements apply from this date"]],
+  facts:{"Deadlines":"Published per programme in the programme finder","Deposit":"Usually £2,000 for international self-funded offer-holders"},
+  note:"Each programme has a 2027 admissions statement listing exactly what to upload.",
+  links:[["Programme finder","https://www.bristol.ac.uk/study/postgraduate/search/"],["2027 policies","https://www.bristol.ac.uk/study/postgraduate/after-you-apply/policies/2027/"]]},
+ {id:"standrews",name:"University of St Andrews",city:"St Andrews",sys:"final",
+  dates:[["2026-08-03","PGT applications for 2027 opened"],["2027-08-05","Standard deadline on many 2027 course pages"]],
+  facts:{"Academic":"A good first degree with Honours, or overseas equivalent","Application fee":"£50"},
+  note:"Some programmes close before the deadline if full; a few (e.g. Psychology) decide only after the deadline.",
+  links:[["Taught programmes: how to apply","https://www.st-andrews.ac.uk/study/postgraduate/apply/taught/"]]},
+ {id:"durham",name:"Durham University",city:"Durham",sys:"rolling",
+  dates:[],
+  facts:{"Deadlines":"Advertised per course; cycle opens each October","Academic":"Commonly a 2:1 or equivalent","Application fee":"£60 for Business School MSc programmes"},
+  note:"Some programmes use staged admissions with set review dates.",
+  links:[["Postgraduate taught","https://dur.ac.uk/study/postgraduate/taught-degrees/"]]},
+ {id:"glasgow",name:"University of Glasgow",city:"Glasgow",sys:"rounds",
+  dates:[["2026-11-05","International round 1 closes (decision by 18 Dec)"],["2026-12-17","Round 2 closes (decision by 3 Mar)"],["2027-02-04","Round 3 closes (decision by 8 Apr)"],["2027-03-25","Round 4 closes (decision by 6 May)"],["2027-05-13","Round 5 closes (decision by 10 Jun)"],["2027-07-08","Round 6 closes (decision by 29 Jul)"],["2027-08-24","UK applicant deadline (example programme)"]],
+  facts:{"Application limit":"One application per programme per year","Application fee":"£25 on some programmes","Deposit":"£2,000 on many programmes"},
+  note:"Round dates shown are from a College of Science & Engineering programme; check yours.",
+  links:[["Taught programmes A–Z","https://www.gla.ac.uk/postgraduate/taught/"],["Example round dates","https://www.gla.ac.uk/postgraduate/taught/methods-in-applied-mathematics/applicationdeadlines/"]]},
+ {id:"bath",name:"University of Bath",city:"Bath",sys:"fixed",
+  dates:[],
+  facts:{"Deadlines":"2027 dates not yet found; set per course","Intakes":"September, plus January for some School of Management courses"},
+  note:"Check the course page for the 2027 overseas deadline.",
+  links:[["Applying for a taught course","https://www.bath.ac.uk/guides/applying-for-a-taught-postgraduate-course/"]]},
+ {id:"southampton",name:"University of Southampton",city:"Southampton",sys:"final",
+  dates:[["2027-08-18","Example course deadline (MSc Chemistry, via guide site)"]],
+  facts:{"Application fee":"£50 assessment fee","Deposit":"£2,000 for most international offer-holders"},
+  note:"May close earlier to applicants from some countries, so apply early.",
+  links:[["Postgraduate taught applications","https://www.southampton.ac.uk/study/postgraduate-taught/apply"]]},
+ {id:"birmingham",name:"University of Birmingham",city:"Birmingham",sys:"final",
+  dates:[["2027-07-02","Overseas deadline for most taught courses"],["2027-07-30","Final deposit deadline"],["2027-08-27","Home applicant deadline"]],
+  facts:{"Application fee":"None for taught courses","Deposit":"£3,000 non-refundable (international)"},
+  note:"",
+  links:[["How to apply (taught)","https://www.birmingham.ac.uk/study/postgraduate/taught/apply"]]},
+ {id:"leeds",name:"University of Leeds",city:"Leeds",sys:"final",
+  dates:[["2026-10-01","Applications for 2027/28 opened"],["2027-07-30","Typical international deadline"],["2027-09-10","Typical UK deadline"]],
+  facts:{"Scholarships":"Apply at least a month before the scholarship deadline"},
+  note:"Some courses have earlier deadlines in Course Search.",
+  links:[["Applying for Masters 2027","https://www.leeds.ac.uk/mastersapply"]]},
+ {id:"nottingham",name:"University of Nottingham",city:"Nottingham",sys:"final",
+  dates:[],
+  facts:{"Deadlines":"International: about 6–7 weeks before the late-September start (2027 dates to be confirmed)","Application fee":"£50","Deposit":"CAS deposit of at least £4,500 (international)"},
+  note:"Your application isn't assessed until the fee has been paid.",
+  links:[["How to apply (taught)","https://nottingham.ac.uk/pgstudy/how-to-apply/taught.aspx"]]},
+ {id:"exeter",name:"University of Exeter",city:"Exeter",sys:"final",
+  dates:[["2026-09-28","Applications for Sept 2027 opened"],["2027-01-28","Exeter Excellence Scholarship (£15,000) round 1 closes"],["2027-04-01","Deposit deadline for offers made Sept 2026 – Jan 2027"]],
+  facts:{"Deadlines":"2027 dates to be published (last cycle: 11 Sept for international)","Deposit":"£2,500 (international)"},
+  note:"",
+  links:[["Application deadlines","https://www.exeter.ac.uk/masters-degrees/apply/application-deadlines/"],["Excellence Scholarship","https://www.exeter.ac.uk/study/funding/award/?id=5911"]]},
+ {id:"sheffield",name:"University of Sheffield",city:"Sheffield",sys:"final",
+  dates:[["2027-07-06","Accept offer by this date for the £7,000 International Scholarship"]],
+  facts:{"Deadlines":"2027 visa-applicant date to be confirmed (last cycle: 1 September)","Deposit":"£2,000 (international)"},
+  note:"The £7,000 scholarship is automatic for students from selected regions.",
+  links:[["Key dates and deadlines","https://www.sheffield.ac.uk/postgraduate/taught/apply/deadlines"],["2027 scholarship","https://sheffield.ac.uk/international/fees-and-funding/scholarships/postgraduate/2027"]]},
+ {id:"york",name:"University of York",city:"York",sys:"final",
+  dates:[["2027-08-25","International deadline (excluding online courses)"],["2027-09-03","Home and online-course deadline"]],
+  facts:{"Academic":"Usually at least a 2:2 equivalent; some courses higher","Scholarships":"York International Masters Scholarship £5,000–£8,000, automatic for eligible countries","Deposit":"£3,000 (2026/27 figure)"},
+  note:"Some courses have earlier closing dates.",
+  links:[["Apply to a taught course","https://www.york.ac.uk/study/postgraduate-taught/apply/"]]},
+ {id:"lancaster",name:"Lancaster University",city:"Lancaster",sys:"final",
+  dates:[["2027-04-07","Accept offer by this date for £2,000 Early Acceptance Scholarship"],["2027-07-28","Submit applications by this date (Management School)"]],
+  facts:{"References":"One reference for taught courses","Application fee":"None for 2026 entry; check for 2027"},
+  note:"",
+  links:[["How to apply","https://www.lancaster.ac.uk/study/postgraduate/how-to-apply-for-postgraduate-study/"],["Management School","https://www.lancaster.ac.uk/lums/study/masters/scholarships/"]]},
+ {id:"loughborough",name:"Loughborough University",city:"Loughborough / London",sys:"final",
+  dates:[["2027-09-03","Last CAS issued for visa applications from overseas"],["2027-09-13","UK applicant deadline"]],
+  facts:{"Deadlines":"International deadline listed on the deadlines page (last cycle: 24 August)","Fees":"Full-time from £31,750 (international, 2027/28)","English":"Standard band IELTS 6.5, no component below 6.0"},
+  note:"Applications near the deadline are only considered if every document is uploaded at once.",
+  links:[["Key master's deadlines","https://lboro.ac.uk/study/apply/masters-degree/deadlines/"]]},
+ {id:"newcastle",name:"Newcastle University",city:"Newcastle",sys:"rolling",
+  dates:[],
+  facts:{"Deadlines":"None for most master's; some fill early","Decision time":"Aims to respond within 30 days","Application fee":"None (guide site)"},
+  note:"",
+  links:[["Not too late to apply","https://belong.ncl.ac.uk/blog/nottolatetoapplyforpgcourse"],["Offer guide","https://www.ncl.ac.uk/postgraduate/your-offer-guide/"]]},
+ {id:"cardiff",name:"Cardiff University",city:"Cardiff",sys:"fixed",
+  dates:[],
+  facts:{"Deadlines":"Check each course page","Application fee":"None for any postgraduate programme","Deposit":"£3,000 (£5,000 if domiciled in Bangladesh, Ghana or Pakistan)"},
+  note:"",
+  links:[["How to apply","https://www.cardiff.ac.uk/study/postgraduate/applying/how-to-apply"]]},
+ {id:"liverpool",name:"University of Liverpool",city:"Liverpool",sys:"final",
+  dates:[],
+  facts:{"Deadlines":"2027 dates not yet listed (last cycle: 21 Aug international, 11 Sept UK)","Intakes":"September 2027, plus January for selected courses"},
+  note:"",
+  links:[["Applying online","https://www.liverpool.ac.uk/study/postgraduate/applying/online/"]]},
+ {id:"surrey",name:"University of Surrey",city:"Guildford",sys:"final",
+  dates:[["2027-07-22","Meet offer conditions by this date if you need a visa"]],
+  facts:{"Academic":"Many courses ask for a 2:2 minimum","Application fee":"None (guide site)","Intakes":"September, plus February for some courses"},
+  note:"",
+  links:[["Your offer and deadlines","https://www.surrey.ac.uk/apply/postgraduate/your-offer"]]},
+ {id:"qmul",name:"Queen Mary University of London",city:"London",sys:"final",
+  dates:[],
+  facts:{"Deadlines":"Standard dates on the key dates page; some programmes earlier","ATAS":"Some science and engineering courses need ATAS clearance for visa applicants"},
+  note:"",
+  links:[["Key dates and deadlines","https://www.my.qmul.ac.uk/postgraduate/taught/deadlines/"]]},
+ {id:"rhul",name:"Royal Holloway, University of London",city:"Egham",sys:"final",
+  dates:[["2027-06-27","Apply by this date for a decision by 16 July"],["2027-07-30","Apply by this date for a decision by 13 August"],["2027-08-20","Final international deadline"],["2027-08-27","Final home deadline"]],
+  facts:{"Scholarships":"International Masters Scholarship: automatic £4,000 for listed countries"},
+  note:"",
+  links:[["Applying","https://www.royalholloway.ac.uk/studying-here/applying"]]},
+ {id:"sussex",name:"University of Sussex",city:"Brighton",sys:"final",
+  dates:[["2027-08-01","International deadline (shown on 2027 course pages)"],["2027-09-01","UK deadline"]],
+  facts:{"Courses":"More than 200 master's, PG diploma and PGCE courses","Deposit":"Required for self-funded international students"},
+  note:"Some courses have earlier deadlines.",
+  links:[["How to apply for a Masters","https://www.sussex.ac.uk/study/masters/apply"]]}
+];
+
+const SYS = {rounds:"Rounds",fixed:"Course deadlines",rolling:"Rolling",final:"Single final date"};
+
+const CHECK = [
+ ["transcript","Degree transcript","Official marks from your university, translated into English if needed."],
+ ["certificate","Degree certificate","Or a letter confirming your expected graduation date."],
+ ["statement","Personal statement","Often course-specific; some universities (e.g. Imperial Business School) ask essay questions instead."],
+ ["ref1","Academic reference 1","Ask early. LSE won't process an application until every referee replies."],
+ ["ref2","Second reference","Many courses need two; Warwick and Lancaster usually ask for one."],
+ ["cv","CV","Required for business and professional courses; often optional elsewhere."],
+ ["english","English test (IELTS, TOEFL or PTE)","Typical level IELTS 6.5 overall; higher for some courses. Can often be sent after applying."],
+ ["passport","Passport copy","Needed for international applicants."],
+ ["sample","Writing sample or portfolio","Only some courses (e.g. Cambridge MPhil Public Policy asks for 1,000 words)."],
+ ["tests","GRE or GMAT","Only some courses, e.g. Oxford MSc Economics for Development."],
+ ["fees","Application fees budget","£0–£75 each; Birmingham, Cardiff and Newcastle charge none."],
+ ["funding","Scholarship applications","Often due before the course deadline (Cambridge funding: 8 Dec 2026)."],
+ ["deposit","Tuition deposit","Usually £2,000–£4,500 for international offer-holders."],
+ ["atas","ATAS certificate (if needed)","Some science and engineering subjects; apply only after you get an offer."],
+ ["cas","CAS from your chosen university","Issued after you accept and pay the deposit; you need it for the visa."],
+ ["visa","Student visa application","Leave enough time: universities ask visa applicants to apply earlier."]
+];
+
+
+
+const SCHOLAR = /scholarship|funding|financial support/i;
+
+// ---------- state ----------
+let state;
+try { state = JSON.parse(document.getElementById("state").textContent); } catch(e){ state = {entries:[],shortlist:[],checked:{}}; }
+state.entries = state.entries || []; state.shortlist = state.shortlist || []; state.checked = state.checked || {};
+let artifactApi = null, mode = "pending", saveTimer = null;
+const LSKEY = "uk-masters-journal-v1";
+function setSaveMsg(t){ const el = document.getElementById("saveState"); if(el) el.textContent = t; }
+function loadLocal(){ try { const raw = localStorage.getItem(LSKEY); if(raw){ const s = JSON.parse(raw); if(s && s.entries) state = s; } } catch(e){} }
+function saveLocal(){ try { localStorage.setItem(LSKEY, JSON.stringify(state)); return true; } catch(e){ return false; } }
+function buildDoc(){
+  const json = JSON.stringify(state).replace(/</g,"\\u003c");
+  return PRISTINE.replace(/(<script type="application\/json" id="state">)[\s\S]*?(<\/script>)/, function(_, a, b){ return a + json + b; });
+}
+function scheduleSave(){
+  if(mode === "artifact"){
+    setSaveMsg("Saving…");
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(async function(){
+      try { await artifactApi.publish(buildDoc()); setSaveMsg("Saved to this page."); }
+      catch(err){
+        const code = (err && (err.code || err.message)) || "";
+        if(/not_granted|not_writer/.test(code)){ mode = "readonly"; setSaveMsg("This copy is read-only, so changes aren't kept."); }
+        else if(/conflict/.test(code)){ setSaveMsg("The page was updated elsewhere; reloading."); }
+        else { setSaveMsg(saveLocal() ? "Couldn't save to the page; kept in this browser for now." : "Couldn't save this change."); }
+      }
+    }, 1200);
+  } else { setSaveMsg(saveLocal() ? "Saved in this browser only." : "Changes can't be saved in this view."); }
+}
+
+// ---------- helpers ----------
+const today = new Date(); today.setHours(0,0,0,0);
+const parse = s => { const [y,m,d] = s.split("-").map(Number); return new Date(y, m-1, d); };
+const fmt = s => parse(s).toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"});
+const fmtShort = s => parse(s).toLocaleDateString("en-GB",{day:"numeric",month:"short"});
+const days = s => Math.round((parse(s) - today)/86400000);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const short = n => n.replace("University of ","").replace(" University","").replace(", University of London","");
+const uniName = id => (UNIS.find(u => u.id === id) || {}).name || "General";
+const isStar = id => state.shortlist.includes(id);
+function allDates(){ const a = []; UNIS.forEach(u => u.dates.forEach(([d,l]) => a.push({d,l,u}))); return a.sort((x,y) => parse(x.d) - parse(y.d)); }
+function toggleStar(id){ state.shortlist = isStar(id) ? state.shortlist.filter(x => x !== id) : state.shortlist.concat(id); renderAll(); scheduleSave(); }
+
+// ---------- hero ----------
+function renderHero(){
+  document.getElementById("todayLine").textContent = "Today: " + today.toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"long",year:"numeric"});
+  const up = allDates().filter(x => days(x.d) >= 0);
+  document.getElementById("heroDays").textContent = up.length ? days(up[0].d) : "—";
+  document.getElementById("heroNext").innerHTML = up.slice(0,4).map(x => '<div class="row"><span><span class="who">'+esc(short(x.u.name))+'</span> · '+esc(x.l.length > 46 ? x.l.slice(0,44)+"…" : x.l)+'</span><span>'+fmtShort(x.d)+'</span></div>').join("");
+  document.getElementById("navStar").textContent = "★ " + state.shortlist.length + " shortlisted";
+}
+
+// ---------- first-up tiles ----------
+let tab = "soon";
+function tile(badge, cls, when, title, text, id){
+  return '<div class="tile"><span class="badge '+cls+'">'+badge+'</span><div class="when">'+when+'</div><h3>'+esc(title)+'</h3><p>'+esc(text)+'</p><a class="go textlink" href="#u-'+id+'" data-jump="'+id+'">View details</a></div>';
+}
+function renderTiles(){
+  document.querySelectorAll(".tabbar button").forEach(b => b.setAttribute("aria-selected", b.dataset.tab === tab));
+  const box = document.getElementById("tiles"); let html = "";
+  if(tab === "soon"){
+    const xs = allDates().filter(x => days(x.d) >= 0 && days(x.d) <= 60);
+    html = xs.map(x => tile(days(x.d) <= 30 ? "In " + days(x.d) + " days" : "In " + days(x.d) + " days", days(x.d) <= 30 ? "red" : "amber", fmtShort(x.d), short(x.u.name), x.l, x.u.id)).join("");
+    if(!xs.length) html = '<div class="empty">No dated deadlines in the next 60 days.</div>';
+  } else if(tab === "star"){
+    const us = UNIS.filter(u => isStar(u.id));
+    html = us.map(u => { const n = u.dates.find(([d]) => days(d) >= 0); return tile(SYS[u.sys], "dark", n ? fmtShort(n[0]) : "Check page", short(u.name), n ? n[1] : (u.facts.Deadlines || "No single date found"), u.id); }).join("");
+    if(!us.length) html = '<div class="empty">Your shortlist is empty. Use "Add to shortlist" on any university card below.</div>';
+  } else if(tab === "rolling"){
+    const us = UNIS.filter(u => u.sys === "rolling");
+    html = us.map(u => tile("Rolling", "", "Apply early", short(u.name), u.facts.Deadlines || u.note, u.id)).join("");
+  } else {
+    const xs = allDates().filter(x => days(x.d) >= 0 && SCHOLAR.test(x.l));
+    html = xs.map(x => tile("Funding", "", fmtShort(x.d), short(x.u.name), x.l, x.u.id)).join("") || '<div class="empty">No upcoming scholarship dates on the list.</div>';
+  }
+  box.innerHTML = html;
+}
+
+// ---------- universities ----------
+let sysSel = "all", starOnly = false;
+function renderSysFilter(){
+  const opts = [["all","All"]].concat(Object.entries(SYS));
+  document.getElementById("sysFilter").innerHTML = opts.map(([k,v]) => '<button type="button" class="chip" data-sys="'+k+'" aria-pressed="'+(sysSel===k)+'">'+v+'</button>').join(" ");
+}
+function sysBadge(s){ return {rounds:"dark",fixed:"red",rolling:"",final:"amber"}[s]; }
+function renderUnis(){
+  const q = document.getElementById("q").value.trim().toLowerCase();
+  const list = UNIS.filter(u => (sysSel === "all" || u.sys === sysSel) && (!starOnly || isStar(u.id)) && (!q || (u.name + " " + u.city).toLowerCase().includes(q)));
+  const grid = document.getElementById("uniGrid");
+  if(!list.length){ grid.innerHTML = '<div class="empty">No universities match. '+(starOnly ? "Star a few universities first, or turn off “Shortlist only”." : "Try a different search.")+'</div>'; return; }
+  grid.innerHTML = list.map(u => {
+    const nextIdx = u.dates.findIndex(([d]) => days(d) >= 0);
+    const dates = u.dates.length ? '<ul class="dates">' + u.dates.map(([d,l],i) => '<li class="'+(days(d)<0?"past":(i===nextIdx?"next":""))+'"><span class="d">'+fmt(d)+'</span><span>'+esc(l)+'</span></li>').join("") + '</ul>' : '<p class="note">No single 2027 date found: check the course page.</p>';
+    const facts = '<dl class="facts">' + Object.entries(u.facts).map(([k,v]) => '<dt>'+esc(k)+'</dt><dd>'+esc(v)+'</dd>').join("") + '</dl>';
+    const links = u.links.map(([t,h]) => '<a class="btn small" href="'+esc(h)+'" target="_blank" rel="noopener">'+esc(t)+' ↗</a>').join("");
+    const n = state.entries.filter(e => e.uni === u.id).length;
+    return '<article class="card'+(isStar(u.id)?" star":"")+'" id="u-'+u.id+'"><div class="card-head"><div><h3>'+esc(u.name)+'</h3><div class="city">'+esc(u.city)+'</div></div><span class="badge '+sysBadge(u.sys)+'">'+SYS[u.sys]+'</span></div>'
+      + dates + facts + (u.note ? '<p class="note">'+esc(u.note)+'</p>' : "")
+      + '<div class="actions"><button type="button" class="btn small" data-star="'+u.id+'" aria-pressed="'+isStar(u.id)+'">'+(isStar(u.id)?"★ Shortlisted":"☆ Add to shortlist")+'</button><button type="button" class="btn small" data-note="'+u.id+'">Diary note'+(n?" ("+n+")":"")+'</button>'+links+'</div></article>';
+  }).join("");
+}
+
+// ---------- numbers ----------
+function renderNumbers(){
+  const ds = allDates().filter(x => days(x.d) >= 0);
+  const rounds = UNIS.filter(u => u.sys === "rounds").length, rolling = UNIS.filter(u => u.sys === "rolling").length;
+  const applied = state.entries.filter(e => e.kind === "Applied").length;
+  document.getElementById("statgrid").innerHTML = [
+    [UNIS.length, "universities covered"],
+    [ds.length, "upcoming dated deadlines"],
+    [rounds + rolling, "use rounds or rolling admissions, so earlier is better"],
+    [applied, applied === 1 ? "application sent (from your diary)" : "applications sent (from your diary)"]
+  ].map(([n,t]) => '<div><div class="n">'+n+'<em>.</em></div><p>'+t+'</p></div>').join("");
+}
+
+// ---------- timeline ----------
+let tlStar = false, tlPast = false;
+function renderTimeline(){
+  const list = allDates().filter(x => (tlPast || days(x.d) >= 0) && (!tlStar || isStar(x.u.id)));
+  const box = document.getElementById("tlList");
+  if(!list.length){ box.innerHTML = '<div class="empty">Nothing to show. '+(tlStar?"Star some universities, or turn off “Shortlist only”.":"")+'</div>'; return; }
+  const groups = {};
+  list.forEach(x => { const k = parse(x.d).toLocaleDateString("en-GB",{month:"long",year:"numeric"}); (groups[k] = groups[k] || []).push(x); });
+  box.innerHTML = Object.entries(groups).map(([m,xs]) => '<div class="month"><h3>'+m+'</h3><ul class="tl">' + xs.map(x => {
+    const dd = days(x.d), cls = dd < 0 ? "past" : (dd <= 30 ? "soon" : "");
+    return '<li class="'+cls+'"><span class="d">'+fmtShort(x.d)+'</span><span><span class="u">'+(isStar(x.u.id)?"★ ":"")+esc(short(x.u.name))+'</span>'+esc(x.l)+'</span></li>';
+  }).join("") + '</ul></div>').join("");
+}
+
+// ---------- diary ----------
+function renderDiaryOptions(){
+  const opts = UNIS.map(u => '<option value="'+u.id+'">'+esc(u.name)+'</option>').join("");
+  document.getElementById("eUni").innerHTML = '<option value="">General</option>' + opts;
+  const f = document.getElementById("dFilter"), cur = f.value;
+  f.innerHTML = '<option value="">All entries</option><option value="_star">Shortlist only</option>' + opts;
+  f.value = cur;
+}
+function renderEntries(){
+  const f = document.getElementById("dFilter").value;
+  const list = state.entries.filter(e => !f || (f === "_star" ? isStar(e.uni) : e.uni === f)).slice().sort((a,b) => b.date.localeCompare(a.date) || b.id.localeCompare(a.id));
+  const ul = document.getElementById("entries");
+  if(!list.length){ ul.innerHTML = '<li class="empty">No entries yet for this filter.</li>'; return; }
+  const kc = {Offer:"",Rejected:"red",Applied:"dark",Interview:"amber"};
+  ul.innerHTML = list.map(e => '<li><div class="meta"><span class="d">'+fmt(e.date)+'</span><span class="badge '+(kc[e.kind]||"")+'">'+esc(e.kind)+'</span><span>'+esc(uniName(e.uni))+'</span><button type="button" class="linkbtn" data-del="'+esc(e.id)+'">Delete</button></div><p>'+esc(e.text)+'</p></li>').join("");
+}
+
+// ---------- checklist ----------
+function renderChecklist(){
+  const done = CHECK.filter(c => state.checked[c[0]]).length;
+  document.getElementById("checkCount").textContent = done + " of " + CHECK.length + " ready";
+  document.getElementById("checkBar").style.width = Math.round(done / CHECK.length * 100) + "%";
+  document.getElementById("checkList").innerHTML = CHECK.map(([k,t,w]) => '<li class="'+(state.checked[k]?"done":"")+'"><input type="checkbox" id="c-'+k+'" data-check="'+k+'" '+(state.checked[k]?"checked":"")+'><label for="c-'+k+'"><span>'+esc(t)+'</span><span class="why">'+esc(w)+'</span></label></li>').join("");
+}
+
+function renderAll(){ renderHero(); renderTiles(); renderSysFilter(); renderUnis(); renderNumbers(); renderTimeline(); renderEntries(); renderChecklist(); }
+
+// ---------- events ----------
+function jumpTo(id){
+  sysSel = "all"; starOnly = false; document.getElementById("starOnly").setAttribute("aria-pressed","false"); document.getElementById("q").value = "";
+  renderSysFilter(); renderUnis();
+  const el = document.getElementById("u-" + id); if(el){ el.scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block:"center"}); }
+}
+document.addEventListener("click", function(ev){
+  const t = ev.target.closest("[data-star],[data-note],[data-sys],[data-del],[data-tab],[data-jump],#starOnly,#tlStar,#tlPast");
+  if(!t) return;
+  if(t.dataset.star){ toggleStar(t.dataset.star); }
+  else if(t.dataset.jump){ ev.preventDefault(); jumpTo(t.dataset.jump); }
+  else if(t.dataset.tab){ tab = t.dataset.tab; renderTiles(); }
+  else if(t.dataset.note){ document.getElementById("eUni").value = t.dataset.note; document.getElementById("diary").scrollIntoView(); setTimeout(() => document.getElementById("eText").focus({preventScroll:true}), 60); }
+  else if(t.dataset.sys){ sysSel = t.dataset.sys; renderSysFilter(); renderUnis(); }
+  else if(t.dataset.del){ state.entries = state.entries.filter(e => e.id !== t.dataset.del); renderAll(); scheduleSave(); }
+  else if(t.id === "starOnly"){ starOnly = !starOnly; t.setAttribute("aria-pressed", starOnly); renderUnis(); }
+  else if(t.id === "tlStar"){ tlStar = !tlStar; t.setAttribute("aria-pressed", tlStar); renderTimeline(); }
+  else if(t.id === "tlPast"){ tlPast = !tlPast; t.setAttribute("aria-pressed", tlPast); renderTimeline(); }
+});
+document.addEventListener("change", function(ev){
+  const k = ev.target.dataset && ev.target.dataset.check;
+  if(k){ if(ev.target.checked) state.checked[k] = true; else delete state.checked[k]; renderChecklist(); scheduleSave(); }
+  if(ev.target.id === "dFilter") renderEntries();
+});
+document.getElementById("q").addEventListener("input", renderUnis);
+document.getElementById("heroSearch").addEventListener("submit", function(ev){
+  ev.preventDefault();
+  document.getElementById("q").value = document.getElementById("heroQ").value;
+  sysSel = "all"; renderSysFilter(); renderUnis();
+  document.getElementById("universities").scrollIntoView();
+});
+document.getElementById("entryForm").addEventListener("submit", function(ev){
+  ev.preventDefault();
+  const text = document.getElementById("eText").value.trim(); if(!text) return;
+  state.entries.push({ id: "e" + Date.now().toString(36), date: document.getElementById("eDate").value, uni: document.getElementById("eUni").value, kind: document.getElementById("eKind").value, text });
+  document.getElementById("eText").value = "";
+  renderAll(); scheduleSave();
+});
+
+// ---------- start ----------
+(function init(){
+  const iso = today.getFullYear() + "-" + String(today.getMonth()+1).padStart(2,"0") + "-" + String(today.getDate()).padStart(2,"0");
+  document.getElementById("eDate").value = iso;
+  renderDiaryOptions(); renderAll();
+  setSaveMsg("Connecting…");
+  if(!(window.claude && typeof window.claude.use === "function")){ mode = "local"; loadLocal(); renderAll(); setSaveMsg("Saved in this browser only."); return; }
+  Promise.resolve(window.claude.use("artifact")).then(function(api){
+    if(api){ artifactApi = api; mode = "artifact"; setSaveMsg("Entries are saved to this page."); }
+    else { mode = "local"; loadLocal(); renderAll(); setSaveMsg("Saved in this browser only."); }
+  }).catch(function(){ mode = "local"; loadLocal(); renderAll(); setSaveMsg("Saved in this browser only."); });
+})();
+})();
+</script>
+</body>
+</html>

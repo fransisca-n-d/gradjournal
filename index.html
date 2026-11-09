@@ -60,6 +60,19 @@ dialog.auth input:focus{outline:none;border-color:var(--black)}
 .x{position:absolute;right:14px;top:12px;background:none;border:0;font-size:26px;line-height:1;cursor:pointer;color:var(--muted)}
 .acct-banner{background:#e5faf5;border:1px solid #bfeee2;border-radius:14px;padding:14px 16px;margin-bottom:14px;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;font-size:14.5px}
 .acct-banner.in{background:var(--soft);border-color:var(--line)}
+.device-note{font-size:13px;color:var(--muted);margin-top:6px}
+.device-note button,.empty button.plain{font-size:inherit}
+.counter small{font-weight:700;color:var(--warn);margin-left:4px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,0);z-index:30;width:min(560px,calc(100% - 32px));background:var(--black);color:#fff;border-radius:14px;padding:14px 16px 14px 18px;display:flex;gap:14px;align-items:center;box-shadow:0 18px 50px rgba(0,0,0,.35)}
+.toast[hidden]{display:none}
+.toast p{margin:0;flex:1;font-size:14.5px;line-height:1.45}
+.toast p strong{color:var(--mint)}
+.toast .tb{display:flex;gap:8px;align-items:center;flex:none}
+.toast .btn.small{border-color:#fff;background:transparent;color:#fff}
+.toast .btn.mint{border-color:var(--mint)}
+.toast .x{position:static;color:#9aa0ab}
+@media (max-width:560px){.toast{flex-wrap:wrap}.toast .tb{width:100%}}
+@media (prefers-reduced-motion:no-preference){.toast:not([hidden]){animation:rise .25s ease-out}@keyframes rise{from{transform:translate(-50%,12px);opacity:0}}}
 
 /* buttons */
 .btn{font:inherit;font-weight:700;font-size:15px;border-radius:10px;padding:11px 20px;cursor:pointer;border:2px solid var(--ink);background:var(--white);color:var(--ink);text-decoration:none;display:inline-flex;align-items:center;gap:8px;line-height:1.2}
@@ -342,7 +355,7 @@ footer a{text-decoration:none} footer a:hover{text-decoration:underline;color:#f
 <section class="band grey" id="checklist">
   <div class="wrap">
     <div class="sec-head"><div><h2>Documents checklist</h2><p>What most UK taught master's applications ask for. Tick items off as they're ready.</p></div>
-      <div><div id="checkCount" style="font-weight:700;margin-bottom:6px"></div><div class="progress"><div id="checkBar" style="width:0"></div></div></div></div>
+      <div><div id="checkCount" style="font-weight:700;margin-bottom:6px"></div><div class="progress"><div id="checkBar" style="width:0"></div></div><div class="device-note" id="checkNote"></div></div></div>
     <ul class="check" id="checkList"></ul>
   </div>
 </section>
@@ -378,6 +391,11 @@ footer a{text-decoration:none} footer a:hover{text-decoration:underline;color:#f
     <div class="legal">University facts come from each university's admissions pages where available, and from application-guide sites (marked "guide site") where not. Deadlines change; confirm on the official course page before applying.</div>
   </div>
 </footer>
+
+<div class="toast" id="toast" role="status" hidden>
+  <p id="toastText"></p>
+  <div class="tb"><button type="button" class="btn mint small" data-auth="signup">Sign up</button><button type="button" class="btn small" data-auth="login">Log in</button><button type="button" class="x" id="toastClose" aria-label="Dismiss">×</button></div>
+</div>
 
 <dialog class="auth" id="authDlg" aria-labelledby="authTitle">
   <form id="authForm" method="dialog" novalidate>
@@ -622,7 +640,7 @@ const short = n => n.replace("University of ","").replace(" University","").repl
 const uniName = id => (UNIS.find(u => u.id === id) || {}).name || "General";
 const isStar = id => state.shortlist.includes(id);
 function allDates(){ const a = []; UNIS.forEach(u => u.dates.forEach(([d,l]) => a.push({d,l,u}))); return a.sort((x,y) => parse(x.d) - parse(y.d)); }
-function toggleStar(id){ state.shortlist = isStar(id) ? state.shortlist.filter(x => x !== id) : state.shortlist.concat(id); renderAll(); persistPrefs(); }
+function toggleStar(id){ const adding = !isStar(id); state.shortlist = adding ? state.shortlist.concat(id) : state.shortlist.filter(x => x !== id); renderAll(); persistPrefs(adding ? "shortlist" : ""); }
 
 // ---------- hero ----------
 function renderHero(){
@@ -630,7 +648,7 @@ function renderHero(){
   const up = allDates().filter(x => days(x.d) >= 0);
   document.getElementById("heroDays").textContent = up.length ? days(up[0].d) : "—";
   document.getElementById("heroNext").innerHTML = up.slice(0,4).map(x => '<div class="row"><span><span class="who">'+esc(short(x.u.name))+'</span> · '+esc(x.l.length > 46 ? x.l.slice(0,44)+"…" : x.l)+'</span><span>'+fmtShort(x.d)+'</span></div>').join("");
-  document.getElementById("navStar").textContent = "★ " + state.shortlist.length + " shortlisted";
+  document.getElementById("navStar").innerHTML = "★ " + state.shortlist.length + " shortlisted" + (isGuest() && state.shortlist.length ? "<small>· this device</small>" : "");
 }
 
 // ---------- first-up tiles ----------
@@ -648,7 +666,9 @@ function renderTiles(){
   } else if(tab === "star"){
     const us = UNIS.filter(u => isStar(u.id));
     html = us.map(u => { const n = u.dates.find(([d]) => days(d) >= 0); return tile(SYS[u.sys], "dark", n ? fmtShort(n[0]) : "Check page", short(u.name), n ? n[1] : (u.facts.Deadlines || "No single date found"), u.id); }).join("");
-    if(!us.length) html = '<div class="empty">Your shortlist is empty. Use "Add to shortlist" on any university card below.</div>';
+    if(!us.length) html = isGuest()
+      ? '<div class="empty"><button type="button" class="plain" data-auth="login">Log in</button> to see your saved shortlist, or start one with "Add to shortlist" on any university card below.</div>'
+      : '<div class="empty">Your shortlist is empty. Use "Add to shortlist" on any university card below.</div>';
   } else if(tab === "rolling"){
     const us = UNIS.filter(u => u.sys === "rolling");
     html = us.map(u => tile("Rolling", "", "Apply early", short(u.name), u.facts.Deadlines || u.note, u.id)).join("");
@@ -722,7 +742,7 @@ function renderEntries(){
   const f = document.getElementById("dFilter").value;
   const list = state.entries.filter(e => !f || (f === "_star" ? isStar(e.uni) : e.uni === f)).slice().sort((a,b) => b.date.localeCompare(a.date) || String(b.created || b.id).localeCompare(String(a.created || a.id)));
   const ul = document.getElementById("entries");
-  if(!list.length){ ul.innerHTML = '<li class="empty">No entries yet for this filter.</li>'; return; }
+  if(!list.length){ ul.innerHTML = (isGuest() && !f) ? '<li class="empty"><button type="button" class="plain" data-auth="login">Log in</button> to view your saved diary entries, or write your first one.</li>' : '<li class="empty">No entries yet for this filter.</li>'; return; }
   const kc = {Offer:"",Rejected:"red",Applied:"dark",Interview:"amber"};
   ul.innerHTML = list.map(e => '<li><div class="meta"><span class="d">'+fmt(e.date)+'</span><span class="badge '+(kc[e.kind]||"")+'">'+esc(e.kind)+'</span><span>'+esc(uniName(e.uni))+'</span><button type="button" class="linkbtn" data-del="'+esc(e.id)+'">Delete</button></div><p>'+esc(e.text)+'</p></li>').join("");
 }
@@ -731,6 +751,7 @@ function renderEntries(){
 function renderChecklist(){
   const done = CHECK.filter(c => state.checked[c[0]]).length;
   document.getElementById("checkCount").textContent = done + " of " + CHECK.length + " ready";
+  document.getElementById("checkNote").innerHTML = isGuest() ? 'Saved on this device only. <button type="button" class="plain" data-auth="login">Log in</button> to keep your ticks.' : "";
   document.getElementById("checkBar").style.width = Math.round(done / CHECK.length * 100) + "%";
   document.getElementById("checkList").innerHTML = CHECK.map(([k,t,w]) => '<li class="'+(state.checked[k]?"done":"")+'"><input type="checkbox" id="c-'+k+'" data-check="'+k+'" '+(state.checked[k]?"checked":"")+'><label for="c-'+k+'"><span>'+esc(t)+'</span><span class="why">'+esc(w)+'</span></label></li>').join("");
 }
@@ -758,7 +779,7 @@ document.addEventListener("click", function(ev){
 });
 document.addEventListener("change", function(ev){
   const k = ev.target.dataset && ev.target.dataset.check;
-  if(k){ if(ev.target.checked) state.checked[k] = true; else delete state.checked[k]; renderChecklist(); persistPrefs(); }
+  if(k){ if(ev.target.checked) state.checked[k] = true; else delete state.checked[k]; renderChecklist(); renderHero(); persistPrefs(ev.target.checked ? "checklist" : ""); }
   if(ev.target.id === "dFilter") renderEntries();
 });
 document.getElementById("q").addEventListener("input", renderUnis);
@@ -782,16 +803,30 @@ const SB_URL = "https://hlemoqunefivhxzashze.supabase.co";
 const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhsZW1vcXVuZWZpdmh4emFzaHplIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQxODQ2MTQsImV4cCI6MjEwOTc2MDYxNH0.LKCkfrOBNBjq1_ic5swg_wFME-AoPtizs1dduJFwtQU";
 let sb = null, user = null, prefTimer = null, authMode = "signup", sessionSeen = false;
 const blank = () => ({entries:[], shortlist:[], checked:{}});
+function isGuest(){ return mode === "cloud" && !!sb && !user; }
+const NUDGE = {
+  shortlist: "<strong>Added to your shortlist</strong> on this device only. Log in to see your shortlist again on any device.",
+  diary: "<strong>Entry saved</strong> on this device only. Log in to view your diary again on any device.",
+  checklist: "<strong>Ticked</strong> on this device only. Log in to keep your checklist on any device."
+};
+const nudged = {}; let toastTimer = null;
+function guestNudge(kind){
+  if(!isGuest() || !kind || nudged[kind]) return;
+  nudged[kind] = true;
+  document.getElementById("toastText").innerHTML = NUDGE[kind];
+  const el = document.getElementById("toast"); el.hidden = false;
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => { el.hidden = true; }, 9000);
+}
 const signedIn = () => mode === "cloud" && sb && user;
 const hereURL = () => location.origin + location.pathname;
 const fromRow = r => ({ id: r.id, date: r.entry_date, uni: r.uni || "", kind: r.kind, text: r.body, created: r.created_at });
 
 function readLocal(){ try { const raw = localStorage.getItem(LSKEY); return raw ? JSON.parse(raw) : null; } catch(e){ return null; } }
-function localMsg(){ setSaveMsg(saveLocal() ? "Saved in this browser only. Log in to keep it in your account." : "Log in to save your entries."); }
+function localMsg(){ setSaveMsg(saveLocal() ? "Saved on this device only. Log in to keep your diary on any device." : "Log in to save your entries."); }
 
 function addEntry(e){
   state.entries.push(e); renderAll();
-  if(!signedIn()){ if(mode === "cloud") localMsg(); else scheduleSave(); return; }
+  if(!signedIn()){ if(mode === "cloud"){ localMsg(); guestNudge("diary"); } else scheduleSave(); return; }
   setSaveMsg("Saving…");
   sb.from("diary_entries").insert({ entry_date: e.date, uni: e.uni, kind: e.kind, body: e.text }).select().single().then(({data, error}) => {
     if(error){ state.entries = state.entries.filter(x => x.id !== e.id); renderAll(); setSaveMsg("Couldn't save that entry: " + error.message); return; }
@@ -806,8 +841,8 @@ function removeEntry(id){
     if(error){ state.entries = before; renderAll(); setSaveMsg("Couldn't delete: " + error.message); } else setSaveMsg("Saved to your account.");
   });
 }
-function persistPrefs(){
-  if(!signedIn()){ if(mode === "cloud") localMsg(); else scheduleSave(); return; }
+function persistPrefs(kind){
+  if(!signedIn()){ if(mode === "cloud"){ localMsg(); guestNudge(kind); } else scheduleSave(); return; }
   setSaveMsg("Saving…"); clearTimeout(prefTimer);
   prefTimer = setTimeout(() => {
     sb.from("user_state").upsert({ user_id: user.id, shortlist: state.shortlist, checked: state.checked, updated_at: new Date().toISOString() }).then(({error}) => setSaveMsg(error ? "Couldn't save: " + error.message : "Saved to your account."));
@@ -843,7 +878,7 @@ function handleSession(session){
   if(sessionSeen && ((u && user && u.id === user.id) || (!u && !user))) return;
   sessionSeen = true; user = u;
   if(user){ renderAcct(); loadCloud(); }
-  else { state = Object.assign(blank(), readLocal() || {}); renderAll(); renderAcct(); setSaveMsg("Saved in this browser only. Log in to keep it in your account."); }
+  else { state = Object.assign(blank(), readLocal() || {}); renderAll(); renderAcct(); setSaveMsg("Saved on this device only. Log in to keep your diary on any device."); }
 }
 
 function startCloud(){
@@ -894,8 +929,10 @@ function authMsg(t, ok){ const m = document.getElementById("authMsg"); m.textCon
 function closeAuth(){ const d = document.getElementById("authDlg"); if(d.open){ try { d.close(); } catch(e){ d.removeAttribute("open"); } } }
 
 document.getElementById("authClose").addEventListener("click", closeAuth);
+document.getElementById("toastClose").addEventListener("click", () => { document.getElementById("toast").hidden = true; });
 document.addEventListener("click", function(ev){
   const b = ev.target.closest("[data-auth]"); if(!b) return;
+  document.getElementById("toast").hidden = true;
   if(b.dataset.auth === "logout"){ sb.auth.signOut(); return; }
   openAuth(b.dataset.auth);
 });

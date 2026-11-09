@@ -42,6 +42,24 @@ In the Supabase dashboard, open **Authentication → URL Configuration** and set
 
 This makes the sign-up confirmation and password-reset emails link back to the site.
 
+## Privacy and account controls
+
+- **Privacy note** on the page (`#privacy`) explains what is stored, where, and who can see it.
+- **Account** (shown above the diary when logged in): *Download my data* (JSON) and *Delete my account* (type DELETE to confirm). Deletion calls the `delete_my_account()` database function, which can only delete the caller's own account; their diary and settings are removed with it.
+- Passwords must be at least 10 characters with letters and a number.
+
+## Security setup checklist (Supabase dashboard)
+
+1. **URL Configuration**: Site URL and a Redirect URL set to `https://fransisca-n-d.github.io/gradjournal/`.
+2. **Password rules**: Authentication → Sign In / Providers → Email: minimum length 10, require letters and digits.
+3. **Bot protection (Cloudflare Turnstile)**
+   1. Create a free Turnstile widget in the Cloudflare dashboard for the hostname `fransisca-n-d.github.io`.
+   2. Put its **site key** (public) in `TURNSTILE_SITEKEY` in `index.html` and deploy.
+   3. Only then: Authentication → Bot and Abuse Protection → enable CAPTCHA, provider Turnstile, paste the **secret key**.
+   (Doing step 3 before step 2 would block every sign-up and log-in.)
+4. **Email sending**: connect a custom SMTP provider under Authentication → Emails → SMTP Settings, then raise the email rate limit under Rate Limits.
+5. **Email templates**: paste `supabase/templates/confirm-signup.html` and `reset-password.html` into Authentication → Emails → Templates (subjects are in the comment at the top of each file).
+
 ## Updating university data
 
 All university facts live in the `UNIS` array near the top of the `<script>` in `index.html`. Each entry has:

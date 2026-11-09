@@ -54,6 +54,18 @@ dialog.auth h2{font-size:28px}
 dialog.auth label{font-size:13px;font-weight:700;color:var(--muted);display:flex;flex-direction:column;gap:5px}
 dialog.auth input{font:inherit;border:1.5px solid var(--line);border-radius:10px;padding:11px 12px}
 dialog.auth input:focus{outline:none;border-color:var(--black)}
+.captcha{min-height:65px}
+.acct-inner{padding:28px;display:flex;flex-direction:column;gap:14px;position:relative}
+.acct-block{border:1px solid var(--line);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+.acct-block h3{font-size:17px} .acct-block p{margin:0;font-size:14px;color:var(--muted)}
+.acct-block label{font-size:13px;font-weight:700;color:var(--muted);display:flex;flex-direction:column;gap:5px;width:100%}
+.acct-block input{font:inherit;border:1.5px solid var(--line);border-radius:10px;padding:9px 11px}
+.danger-zone{border-color:#f0c4ba;background:#fff7f5}
+.danger-btn{background:var(--deadline);border-color:var(--deadline);color:#fff}
+.danger-btn:disabled{opacity:.45;cursor:not-allowed}
+.privacy{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.privacy > div{background:var(--white);border:1px solid var(--line);border-radius:18px;padding:18px}
+.privacy h3{font-size:17px;margin-bottom:6px} .privacy p{margin:0;font-size:14.5px;color:var(--muted)}
 .auth-msg{font-size:14px;min-height:20px;margin:0}
 .auth-msg.err{color:var(--deadline)} .auth-msg.ok{color:var(--mint-dark)}
 .auth-switch{font-size:14px;color:var(--muted);margin:0}
@@ -464,6 +476,20 @@ footer a{text-decoration:none} footer a:hover{text-decoration:underline;color:#f
   </div>
 </section>
 
+<section class="band grey" id="privacy">
+  <div class="wrap">
+    <div class="sec-head"><div><h2>Privacy</h2><p>Last updated 9 November 2026. In plain words: what GradJournal keeps, where, and how to remove it.</p></div></div>
+    <div class="privacy">
+      <div><h3>What's stored</h3><p>If you create an account: your email address, your password (stored scrambled by our login provider, never readable), your diary entries, the courses and checklist steps in them, your shortlist and your document ticks. If you don't create an account, all of this stays in your own browser on your device and is never sent to us.</p></div>
+      <div><h3>Where it's kept</h3><p>Accounts and diaries are stored with Supabase, in a data centre in London. The website itself is hosted on GitHub Pages.</p></div>
+      <div><h3>Who can see it</h3><p>Only you. Database rules stop any other account from reading your data. The site owner has administrator access for maintenance only, and never sells or shares your data.</p></div>
+      <div><h3>Other services</h3><p>Your browser loads fonts from Google Fonts and code from jsDelivr, so those services see your IP address. Login emails are sent through our login provider. If bot protection is on, Cloudflare Turnstile checks sign-ups. There are no adverts and no tracking or analytics. Your browser's local storage keeps you logged in.</p></div>
+      <div><h3>Your choices</h3><p>You can download all your data or delete your account at any time from <strong>Account</strong> (shown above your diary when you're logged in). Deleting removes your account and everything in it straight away.</p></div>
+      <div><h3>Questions</h3><p>Open an issue on <a href="https://github.com/fransisca-n-d/gradjournal/issues" target="_blank" rel="noopener">GitHub ↗</a>. Please don't post anything private there; use Account to download or delete your data instead.</p></div>
+    </div>
+  </div>
+</section>
+
 <section class="band" id="faq">
   <div class="wrap">
     <div class="sec-head"><div><h2>Common questions</h2></div></div>
@@ -483,7 +509,7 @@ footer a{text-decoration:none} footer a:hover{text-decoration:underline;color:#f
       <div><a class="brand" href="#diary" style="color:#fff"><span class="mark" aria-hidden="true" style="background:#4b3627"><svg viewBox="0 0 24 24" fill="none" stroke="#a8d08d" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2 9 2 12 0v-5"/></svg></span><span>Grad<span class="bj">Journal</span></span></a><p style="max-width:34ch">A personal planner for UK taught master's applications, September 2027 entry.</p></div>
       <div><h4>Plan</h4><ul><li><a href="#first-up">First up</a></li><li><a href="#universities">Universities</a></li><li><a href="#timeline">Timeline</a></li></ul></div>
       <div><h4>Track</h4><ul><li><a href="#diary">My diary</a></li><li><a href="#checklist">Documents</a></li></ul></div>
-      <div><h4>Help</h4><ul><li><a href="#faq">FAQ</a></li><li><a href="https://www.gov.uk/student-visa" target="_blank" rel="noopener">UK Student visa (GOV.UK) ↗</a></li></ul></div>
+      <div><h4>Help</h4><ul><li><a href="#faq">FAQ</a></li><li><a href="#privacy">Privacy</a></li><li><a href="https://www.gov.uk/student-visa" target="_blank" rel="noopener">UK Student visa (GOV.UK) ↗</a></li></ul></div>
     </div>
     <div class="legal">University facts come from each university's admissions pages where available, and from application-guide sites (marked "guide site") where not. Deadlines change; confirm on the official course page before applying.</div>
   </div>
@@ -501,10 +527,32 @@ footer a{text-decoration:none} footer a:hover{text-decoration:underline;color:#f
     <p class="auth-switch" id="authSub">Save your diary, shortlist and checklist, and see them on any device.</p>
     <label for="authEmail" id="authEmailWrap">Email<input type="email" id="authEmail" autocomplete="email" required></label>
     <label for="authPass" id="authPassWrap">Password<input type="password" id="authPass" autocomplete="new-password" minlength="8" required></label>
+    <div class="captcha" id="captchaBox" hidden></div>
     <p class="auth-msg" id="authMsg" aria-live="polite"></p>
     <button class="btn primary" type="submit" id="authSubmit">Sign up</button>
     <p class="auth-switch" id="authAlt"></p>
   </form>
+</dialog>
+
+<dialog class="auth" id="acctDlg" aria-labelledby="acctTitle">
+  <div class="acct-inner">
+    <button type="button" class="x" data-acctclose="1" aria-label="Close">×</button>
+    <h2 id="acctTitle">Your account</h2>
+    <p class="auth-switch">Signed in as <strong id="acctEmail"></strong></p>
+    <div class="acct-block">
+      <h3>Download my data</h3>
+      <p>Get a copy of everything GradJournal stores about you: your diary entries, applications and their checklists, shortlist and document ticks.</p>
+      <button type="button" class="btn small" id="dlData">Download my data (.json)</button>
+    </div>
+    <div class="acct-block danger-zone">
+      <h3>Delete my account</h3>
+      <p>This permanently deletes your account and everything saved in it. It can't be undone.</p>
+      <label for="delConfirm">Type DELETE to confirm<input id="delConfirm" autocomplete="off" spellcheck="false"></label>
+      <button type="button" class="btn small danger-btn" id="delBtn" disabled>Delete my account</button>
+    </div>
+    <p class="auth-msg" id="acctMsg" aria-live="polite"></p>
+    <p class="auth-switch"><a href="#privacy" data-acctclose="1">Read the privacy note</a></p>
+  </div>
 </dialog>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
@@ -1195,12 +1243,72 @@ function renderAcct(){
   if(mode !== "cloud" || !sb){ nav.innerHTML = ""; ban.innerHTML = ""; return; }
   if(user){
     nav.innerHTML = '<button type="button" class="btn small acct-btn" data-auth="logout" title="Signed in as '+esc(user.email)+'">Log out</button>';
-    ban.innerHTML = '<div class="acct-banner in"><span>Signed in as <strong>'+esc(user.email)+'</strong>. Your diary, shortlist and checklist are saved to your account.</span><button type="button" class="plain" data-auth="logout">Log out</button></div>';
+    ban.innerHTML = '<div class="acct-banner in"><span>Signed in as <strong>'+esc(user.email)+'</strong>. Your diary, shortlist and checklist are saved to your account.</span><span><button type="button" class="btn small" data-acct="open">Account</button> <button type="button" class="plain" data-auth="logout">Log out</button></span></div>';
   } else {
     nav.innerHTML = '<button type="button" class="btn small acct-btn" data-auth="login">Log in</button> <button type="button" class="btn primary small acct-btn" data-auth="signup">Sign up</button>';
     ban.innerHTML = '<div class="acct-banner"><span><strong>Keep your diary safe.</strong> Sign up to save it to an account and see it on any device.</span><span><button type="button" class="btn primary small" data-auth="signup">Sign up</button> <button type="button" class="btn small" data-auth="login">Log in</button></span></div>';
   }
 }
+
+// Bot protection (Cloudflare Turnstile). Paste the public site key here once the widget exists,
+// THEN switch on CAPTCHA in Supabase (Authentication > Bot and Abuse Protection). Empty = off.
+const TURNSTILE_SITEKEY = "";
+let tsWidget = null, captchaToken = null, tsLoading = null;
+function loadTurnstile(){
+  if(!TURNSTILE_SITEKEY) return Promise.resolve(false);
+  if(window.turnstile) return Promise.resolve(true);
+  if(!tsLoading) tsLoading = new Promise(res => { const s = document.createElement("script"); s.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"; s.async = true; s.onload = () => res(true); s.onerror = () => res(false); document.head.appendChild(s); });
+  return tsLoading;
+}
+function showCaptcha(on){
+  const box = document.getElementById("captchaBox");
+  if(!TURNSTILE_SITEKEY || !on){ box.hidden = true; return; }
+  box.hidden = false;
+  loadTurnstile().then(ok => {
+    if(!ok || !window.turnstile) return;
+    if(tsWidget === null) tsWidget = window.turnstile.render(box, { sitekey: TURNSTILE_SITEKEY, theme: "light", callback: t => { captchaToken = t; }, "expired-callback": () => { captchaToken = null; }, "error-callback": () => { captchaToken = null; } });
+  });
+}
+function resetCaptcha(){ captchaToken = null; if(tsWidget !== null && window.turnstile) window.turnstile.reset(tsWidget); }
+const strongEnough = p => p.length >= 10 && /[a-z]/i.test(p) && /\d/.test(p);
+
+// Account: download data, delete account
+function openAcct(){
+  const d = document.getElementById("acctDlg");
+  document.getElementById("acctEmail").textContent = user ? user.email : "";
+  document.getElementById("delConfirm").value = ""; document.getElementById("delBtn").disabled = true;
+  const m = document.getElementById("acctMsg"); m.textContent = ""; m.className = "auth-msg";
+  if(!d.open){ try { d.showModal(); } catch(e){ d.setAttribute("open",""); } }
+}
+function closeAcct(){ const d = document.getElementById("acctDlg"); if(d.open){ try { d.close(); } catch(e){ d.removeAttribute("open"); } } }
+function acctMsg(t, ok){ const m = document.getElementById("acctMsg"); m.textContent = t; m.className = "auth-msg " + (ok ? "ok" : "err"); }
+document.addEventListener("click", function(ev){
+  if(ev.target.closest("[data-acct]")){ openAcct(); return; }
+  if(ev.target.closest("[data-acctclose]")) closeAcct();
+});
+document.getElementById("delConfirm").addEventListener("input", function(){ document.getElementById("delBtn").disabled = this.value.trim() !== "DELETE"; });
+document.getElementById("dlData").addEventListener("click", async function(){
+  if(!signedIn()) return;
+  acctMsg("Preparing your file…", true);
+  const [er, sr] = await Promise.all([ sb.from("diary_entries").select("*").order("entry_date"), sb.from("user_state").select("*").maybeSingle() ]);
+  if(er.error || sr.error){ acctMsg("Couldn't fetch your data. Please try again."); return; }
+  const out = { exported_at: new Date().toISOString(), account: { email: user.email, created_at: user.created_at }, diary_entries: er.data.map(r => { const c = Object.assign({}, r); delete c.user_id; return c; }), shortlist: (sr.data && sr.data.shortlist) || [], documents_checked: (sr.data && sr.data.checked) || {} };
+  const url = URL.createObjectURL(new Blob([JSON.stringify(out, null, 2)], { type: "application/json" }));
+  const a = document.createElement("a"); a.href = url; a.download = "gradjournal-my-data.json"; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
+  acctMsg("Downloaded gradjournal-my-data.json.", true);
+});
+document.getElementById("delBtn").addEventListener("click", async function(){
+  if(!signedIn() || document.getElementById("delConfirm").value.trim() !== "DELETE") return;
+  this.disabled = true; acctMsg("Deleting your account…", true);
+  const { error } = await sb.rpc("delete_my_account");
+  if(error){ acctMsg("Couldn't delete your account: " + error.message); this.disabled = false; return; }
+  try { localStorage.removeItem(LSKEY); } catch(e){}
+  await sb.auth.signOut({ scope: "local" });
+  closeAcct();
+  document.getElementById("toastText").innerHTML = "<strong>Your account has been deleted</strong>, along with everything saved in it.";
+  document.getElementById("toast").hidden = false;
+});
 
 const AUTH = {
   signup: { title:"Create your account", sub:"Save your diary, shortlist and checklist, and see them on any device.", btn:"Sign up", pass:true, newPass:true, alt:'Already have an account? <button type="button" data-auth="login">Log in</button>' },
@@ -1218,6 +1326,7 @@ function openAuth(m){
   document.getElementById("authPassWrap").hidden = !c.pass;
   document.getElementById("authPass").setAttribute("autocomplete", c.newPass ? "new-password" : "current-password");
   document.getElementById("authPass").value = "";
+  showCaptcha(m !== "reset");
   const msg = document.getElementById("authMsg"); msg.textContent = ""; msg.className = "auth-msg";
   if(!dlg.open){ try { dlg.showModal(); } catch(e){ dlg.setAttribute("open",""); } }
   setTimeout(() => document.getElementById(c.email === false ? "authPass" : "authEmail").focus(), 30);
@@ -1238,27 +1347,28 @@ document.getElementById("authForm").addEventListener("submit", async function(ev
   const email = document.getElementById("authEmail").value.trim(), password = document.getElementById("authPass").value;
   const btn = document.getElementById("authSubmit"); const c = AUTH[authMode];
   if(c.email !== false && !/^\S+@\S+\.\S+$/.test(email)) return authMsg("Enter a valid email address.");
-  if(c.pass && c.newPass && password.length < 8) return authMsg("Use at least 8 characters for your password.");
+  if(c.pass && c.newPass && !strongEnough(password)) return authMsg("Use at least 10 characters, with letters and at least one number.");
   if(c.pass && !password) return authMsg("Enter your password.");
+  if(TURNSTILE_SITEKEY && authMode !== "reset" && !captchaToken) return authMsg("Please complete the quick check above first.");
   btn.disabled = true; authMsg("Please wait…", true);
   try {
     if(authMode === "signup"){
-      const { data, error } = await sb.auth.signUp({ email, password, options: { emailRedirectTo: hereURL() } });
+      const { data, error } = await sb.auth.signUp({ email, password, options: { emailRedirectTo: hereURL(), captchaToken: captchaToken || undefined } });
       if(error) authMsg(error.message);
       else if(data.session) closeAuth();
       else authMsg("Almost done: check your inbox and click the confirmation link, then log in.", true);
     } else if(authMode === "login"){
-      const { error } = await sb.auth.signInWithPassword({ email, password });
+      const { error } = await sb.auth.signInWithPassword({ email, password, options: { captchaToken: captchaToken || undefined } });
       if(error) authMsg(/invalid/i.test(error.message) ? "That email and password don't match. Try again or reset your password." : /confirm/i.test(error.message) ? "Please confirm your email first: check your inbox for the link." : error.message);
       else closeAuth();
     } else if(authMode === "forgot"){
-      const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: hereURL() });
+      const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: hereURL(), captchaToken: captchaToken || undefined });
       authMsg(error ? error.message : "If that email has an account, a reset link is on its way.", !error);
     } else if(authMode === "reset"){
       const { error } = await sb.auth.updateUser({ password });
       if(error) authMsg(error.message); else { authMsg("Password updated. You're logged in.", true); setTimeout(closeAuth, 1200); }
     }
-  } finally { btn.disabled = false; }
+  } finally { btn.disabled = false; if(authMode !== "reset") resetCaptcha(); }
 });
 
 // ---------- motion ----------

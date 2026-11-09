@@ -41,7 +41,25 @@ header.nav .wrap{display:flex;align-items:center;gap:28px;height:64px}
 .menu a:hover{background:var(--soft)}
 .nav-right{display:flex;align-items:center;gap:10px}
 .counter{font-size:14px;font-weight:600;padding:8px 12px;border-radius:999px;background:var(--soft);white-space:nowrap;text-decoration:none}
-@media (max-width:860px){.nav-right{display:none}}
+.acct-btn{white-space:nowrap}
+.who-pill{font-size:14px;font-weight:600;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted)}
+@media (max-width:1240px){.who-pill{display:none}}
+@media (max-width:1100px){.counter{display:none}}
+@media (max-width:860px){.nav-right .write{display:none}}
+dialog.auth{border:0;border-radius:18px;padding:0;width:min(420px,calc(100% - 32px));box-shadow:0 30px 80px rgba(0,0,0,.35)}
+dialog.auth::backdrop{background:rgba(17,17,17,.6)}
+dialog.auth form{padding:28px;display:flex;flex-direction:column;gap:14px}
+dialog.auth h2{font-size:28px}
+dialog.auth label{font-size:13px;font-weight:700;color:var(--muted);display:flex;flex-direction:column;gap:5px}
+dialog.auth input{font:inherit;border:1.5px solid var(--line);border-radius:10px;padding:11px 12px}
+dialog.auth input:focus{outline:none;border-color:var(--black)}
+.auth-msg{font-size:14px;min-height:20px;margin:0}
+.auth-msg.err{color:var(--deadline)} .auth-msg.ok{color:var(--mint-dark)}
+.auth-switch{font-size:14px;color:var(--muted);margin:0}
+.auth-switch button,.plain{background:none;border:0;padding:0;font:inherit;font-weight:700;text-decoration:underline;cursor:pointer;color:var(--ink)}
+.x{position:absolute;right:14px;top:12px;background:none;border:0;font-size:26px;line-height:1;cursor:pointer;color:var(--muted)}
+.acct-banner{background:#e5faf5;border:1px solid #bfeee2;border-radius:14px;padding:14px 16px;margin-bottom:14px;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;font-size:14.5px}
+.acct-banner.in{background:var(--soft);border-color:var(--line)}
 
 /* buttons */
 .btn{font:inherit;font-weight:700;font-size:15px;border-radius:10px;padding:11px 20px;cursor:pointer;border:2px solid var(--ink);background:var(--white);color:var(--ink);text-decoration:none;display:inline-flex;align-items:center;gap:8px;line-height:1.2}
@@ -216,7 +234,8 @@ footer a{text-decoration:none} footer a:hover{text-decoration:underline;color:#f
     </nav>
     <div class="nav-right">
       <a class="counter" href="#universities" id="navStar">★ 0 shortlisted</a>
-      <a class="btn primary small" href="#diary">Write entry</a>
+      <span id="acctNav"></span>
+      <a class="btn primary small write" href="#diary">Write entry</a>
     </div>
   </div>
 </header>
@@ -304,11 +323,12 @@ footer a{text-decoration:none} footer a:hover{text-decoration:underline;color:#f
         <label for="eKind">Type<select id="eKind">
           <option>Research</option><option>Writing</option><option>Applied</option><option>Interview</option><option>Offer</option><option>Rejected</option><option>Funding</option><option>Note</option>
         </select></label>
-        <label for="eText">What happened?<textarea id="eText" required placeholder="e.g. Finished the first draft of my personal statement for Edinburgh."></textarea></label>
+        <label for="eText">What happened?<textarea id="eText" required maxlength="5000" placeholder="e.g. Finished the first draft of my personal statement for Edinburgh."></textarea></label>
         <button class="btn mint" type="submit">Add to diary</button>
         <div class="savebar" id="saveState" aria-live="polite"></div>
       </form>
       <div>
+        <div id="acctBanner"></div>
         <div class="diary-tools">
           <label class="visually-hidden" for="dFilter">Filter diary</label>
           <select id="dFilter"><option value="">All entries</option></select>
@@ -359,6 +379,20 @@ footer a{text-decoration:none} footer a:hover{text-decoration:underline;color:#f
   </div>
 </footer>
 
+<dialog class="auth" id="authDlg" aria-labelledby="authTitle">
+  <form id="authForm" method="dialog" novalidate>
+    <button type="button" class="x" id="authClose" aria-label="Close">×</button>
+    <h2 id="authTitle">Create your account</h2>
+    <p class="auth-switch" id="authSub">Save your diary, shortlist and checklist, and see them on any device.</p>
+    <label for="authEmail" id="authEmailWrap">Email<input type="email" id="authEmail" autocomplete="email" required></label>
+    <label for="authPass" id="authPassWrap">Password<input type="password" id="authPass" autocomplete="new-password" minlength="8" required></label>
+    <p class="auth-msg" id="authMsg" aria-live="polite"></p>
+    <button class="btn primary" type="submit" id="authSubmit">Sign up</button>
+    <p class="auth-switch" id="authAlt"></p>
+  </form>
+</dialog>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script type="application/json" id="state">{"entries":[{"id":"e1","date":"2026-11-09","uni":"","kind":"Note","text":"Started this journal. Looking at UK universities for September 2027 entry and building a shortlist."}],"shortlist":[],"checked":{}}</script>
 
 <script>
@@ -588,7 +622,7 @@ const short = n => n.replace("University of ","").replace(" University","").repl
 const uniName = id => (UNIS.find(u => u.id === id) || {}).name || "General";
 const isStar = id => state.shortlist.includes(id);
 function allDates(){ const a = []; UNIS.forEach(u => u.dates.forEach(([d,l]) => a.push({d,l,u}))); return a.sort((x,y) => parse(x.d) - parse(y.d)); }
-function toggleStar(id){ state.shortlist = isStar(id) ? state.shortlist.filter(x => x !== id) : state.shortlist.concat(id); renderAll(); scheduleSave(); }
+function toggleStar(id){ state.shortlist = isStar(id) ? state.shortlist.filter(x => x !== id) : state.shortlist.concat(id); renderAll(); persistPrefs(); }
 
 // ---------- hero ----------
 function renderHero(){
@@ -686,7 +720,7 @@ function renderDiaryOptions(){
 }
 function renderEntries(){
   const f = document.getElementById("dFilter").value;
-  const list = state.entries.filter(e => !f || (f === "_star" ? isStar(e.uni) : e.uni === f)).slice().sort((a,b) => b.date.localeCompare(a.date) || b.id.localeCompare(a.id));
+  const list = state.entries.filter(e => !f || (f === "_star" ? isStar(e.uni) : e.uni === f)).slice().sort((a,b) => b.date.localeCompare(a.date) || String(b.created || b.id).localeCompare(String(a.created || a.id)));
   const ul = document.getElementById("entries");
   if(!list.length){ ul.innerHTML = '<li class="empty">No entries yet for this filter.</li>'; return; }
   const kc = {Offer:"",Rejected:"red",Applied:"dark",Interview:"amber"};
@@ -717,14 +751,14 @@ document.addEventListener("click", function(ev){
   else if(t.dataset.tab){ tab = t.dataset.tab; renderTiles(); }
   else if(t.dataset.note){ document.getElementById("eUni").value = t.dataset.note; document.getElementById("diary").scrollIntoView(); setTimeout(() => document.getElementById("eText").focus({preventScroll:true}), 60); }
   else if(t.dataset.sys){ sysSel = t.dataset.sys; renderSysFilter(); renderUnis(); }
-  else if(t.dataset.del){ state.entries = state.entries.filter(e => e.id !== t.dataset.del); renderAll(); scheduleSave(); }
+  else if(t.dataset.del){ removeEntry(t.dataset.del); }
   else if(t.id === "starOnly"){ starOnly = !starOnly; t.setAttribute("aria-pressed", starOnly); renderUnis(); }
   else if(t.id === "tlStar"){ tlStar = !tlStar; t.setAttribute("aria-pressed", tlStar); renderTimeline(); }
   else if(t.id === "tlPast"){ tlPast = !tlPast; t.setAttribute("aria-pressed", tlPast); renderTimeline(); }
 });
 document.addEventListener("change", function(ev){
   const k = ev.target.dataset && ev.target.dataset.check;
-  if(k){ if(ev.target.checked) state.checked[k] = true; else delete state.checked[k]; renderChecklist(); scheduleSave(); }
+  if(k){ if(ev.target.checked) state.checked[k] = true; else delete state.checked[k]; renderChecklist(); persistPrefs(); }
   if(ev.target.id === "dFilter") renderEntries();
 });
 document.getElementById("q").addEventListener("input", renderUnis);
@@ -737,9 +771,160 @@ document.getElementById("heroSearch").addEventListener("submit", function(ev){
 document.getElementById("entryForm").addEventListener("submit", function(ev){
   ev.preventDefault();
   const text = document.getElementById("eText").value.trim(); if(!text) return;
-  state.entries.push({ id: "e" + Date.now().toString(36), date: document.getElementById("eDate").value, uni: document.getElementById("eUni").value, kind: document.getElementById("eKind").value, text });
+  addEntry({ id: "e" + Date.now().toString(36), date: document.getElementById("eDate").value, uni: document.getElementById("eUni").value, kind: document.getElementById("eKind").value, text });
   document.getElementById("eText").value = "";
-  renderAll(); scheduleSave();
+});
+
+// ---------- accounts (Supabase) ----------
+// Used when the page runs outside claude.ai (e.g. on GitHub Pages). The key below is the public
+// "anon" key: it is safe in browser code because Row Level Security limits each user to their own rows.
+const SB_URL = "https://hlemoqunefivhxzashze.supabase.co";
+const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhsZW1vcXVuZWZpdmh4emFzaHplIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQxODQ2MTQsImV4cCI6MjEwOTc2MDYxNH0.LKCkfrOBNBjq1_ic5swg_wFME-AoPtizs1dduJFwtQU";
+let sb = null, user = null, prefTimer = null, authMode = "signup", sessionSeen = false;
+const blank = () => ({entries:[], shortlist:[], checked:{}});
+const signedIn = () => mode === "cloud" && sb && user;
+const hereURL = () => location.origin + location.pathname;
+const fromRow = r => ({ id: r.id, date: r.entry_date, uni: r.uni || "", kind: r.kind, text: r.body, created: r.created_at });
+
+function readLocal(){ try { const raw = localStorage.getItem(LSKEY); return raw ? JSON.parse(raw) : null; } catch(e){ return null; } }
+function localMsg(){ setSaveMsg(saveLocal() ? "Saved in this browser only. Log in to keep it in your account." : "Log in to save your entries."); }
+
+function addEntry(e){
+  state.entries.push(e); renderAll();
+  if(!signedIn()){ if(mode === "cloud") localMsg(); else scheduleSave(); return; }
+  setSaveMsg("Saving…");
+  sb.from("diary_entries").insert({ entry_date: e.date, uni: e.uni, kind: e.kind, body: e.text }).select().single().then(({data, error}) => {
+    if(error){ state.entries = state.entries.filter(x => x.id !== e.id); renderAll(); setSaveMsg("Couldn't save that entry: " + error.message); return; }
+    state.entries = state.entries.map(x => x.id === e.id ? fromRow(data) : x); renderAll(); setSaveMsg("Saved to your account.");
+  });
+}
+function removeEntry(id){
+  const before = state.entries;
+  state.entries = state.entries.filter(e => e.id !== id); renderAll();
+  if(!signedIn()){ if(mode === "cloud") localMsg(); else scheduleSave(); return; }
+  sb.from("diary_entries").delete().eq("id", id).then(({error}) => {
+    if(error){ state.entries = before; renderAll(); setSaveMsg("Couldn't delete: " + error.message); } else setSaveMsg("Saved to your account.");
+  });
+}
+function persistPrefs(){
+  if(!signedIn()){ if(mode === "cloud") localMsg(); else scheduleSave(); return; }
+  setSaveMsg("Saving…"); clearTimeout(prefTimer);
+  prefTimer = setTimeout(() => {
+    sb.from("user_state").upsert({ user_id: user.id, shortlist: state.shortlist, checked: state.checked, updated_at: new Date().toISOString() }).then(({error}) => setSaveMsg(error ? "Couldn't save: " + error.message : "Saved to your account."));
+  }, 700);
+}
+
+async function loadCloud(){
+  setSaveMsg("Loading your journal…");
+  const [er, sr] = await Promise.all([
+    sb.from("diary_entries").select("*").order("entry_date", {ascending:false}),
+    sb.from("user_state").select("*").maybeSingle()
+  ]);
+  if(er.error || sr.error){ setSaveMsg("Couldn't load your journal. Refresh to try again."); return; }
+  const next = { entries: er.data.map(fromRow), shortlist: (sr.data && sr.data.shortlist) || [], checked: (sr.data && sr.data.checked) || {} };
+  // Move anything saved in this browser before logging in into the account, once.
+  const loc = readLocal(), moved = loc ? (loc.entries || []).length : 0;
+  if(loc && (moved || (loc.shortlist || []).length || Object.keys(loc.checked || {}).length)){
+    if(moved){
+      const ins = await sb.from("diary_entries").insert(loc.entries.map(e => ({ entry_date: e.date, uni: e.uni || "", kind: e.kind, body: e.text }))).select();
+      if(!ins.error) next.entries = next.entries.concat(ins.data.map(fromRow));
+    }
+    next.shortlist = Array.from(new Set(next.shortlist.concat(loc.shortlist || [])));
+    next.checked = Object.assign({}, next.checked, loc.checked || {});
+    await sb.from("user_state").upsert({ user_id: user.id, shortlist: next.shortlist, checked: next.checked, updated_at: new Date().toISOString() });
+    try { localStorage.removeItem(LSKEY); } catch(e){}
+  }
+  state = next; renderAll(); renderAcct();
+  setSaveMsg(moved ? "Saved to your account. " + (moved === 1 ? "1 entry from this browser was added." : moved + " entries from this browser were added.") : "Saved to your account.");
+}
+
+function handleSession(session){
+  const u = session ? session.user : null;
+  if(sessionSeen && ((u && user && u.id === user.id) || (!u && !user))) return;
+  sessionSeen = true; user = u;
+  if(user){ renderAcct(); loadCloud(); }
+  else { state = Object.assign(blank(), readLocal() || {}); renderAll(); renderAcct(); setSaveMsg("Saved in this browser only. Log in to keep it in your account."); }
+}
+
+function startCloud(){
+  mode = "cloud";
+  state = Object.assign(blank(), readLocal() || {}); renderAll();
+  if(!(window.supabase && window.supabase.createClient)){ mode = "local"; renderAcct(); setSaveMsg("Saved in this browser only."); return; }
+  sb = window.supabase.createClient(SB_URL, SB_KEY);
+  sb.auth.onAuthStateChange((event, session) => {
+    if(event === "PASSWORD_RECOVERY") openAuth("reset");
+    setTimeout(() => handleSession(session), 0);
+  });
+  sb.auth.getSession().then(r => handleSession(r.data.session));
+}
+
+function renderAcct(){
+  const nav = document.getElementById("acctNav"), ban = document.getElementById("acctBanner");
+  if(mode !== "cloud" || !sb){ nav.innerHTML = ""; ban.innerHTML = ""; return; }
+  if(user){
+    nav.innerHTML = '<span class="who-pill" title="'+esc(user.email)+'">'+esc(user.email)+'</span> <button type="button" class="btn small acct-btn" data-auth="logout">Log out</button>';
+    ban.innerHTML = '<div class="acct-banner in"><span>Signed in as <strong>'+esc(user.email)+'</strong>. Your diary, shortlist and checklist are saved to your account.</span><button type="button" class="plain" data-auth="logout">Log out</button></div>';
+  } else {
+    nav.innerHTML = '<button type="button" class="btn small acct-btn" data-auth="login">Log in</button> <button type="button" class="btn primary small acct-btn" data-auth="signup">Sign up</button>';
+    ban.innerHTML = '<div class="acct-banner"><span><strong>Keep your diary safe.</strong> Sign up to save it to an account and see it on any device.</span><span><button type="button" class="btn primary small" data-auth="signup">Sign up</button> <button type="button" class="btn small" data-auth="login">Log in</button></span></div>';
+  }
+}
+
+const AUTH = {
+  signup: { title:"Create your account", sub:"Save your diary, shortlist and checklist, and see them on any device.", btn:"Sign up", pass:true, newPass:true, alt:'Already have an account? <button type="button" data-auth="login">Log in</button>' },
+  login:  { title:"Welcome back", sub:"Log in to see your saved diary.", btn:"Log in", pass:true, newPass:false, alt:'New here? <button type="button" data-auth="signup">Create an account</button> · <button type="button" data-auth="forgot">Forgot password?</button>' },
+  forgot: { title:"Reset your password", sub:"We'll email you a link to choose a new password.", btn:"Send reset link", pass:false, alt:'<button type="button" data-auth="login">Back to log in</button>' },
+  reset:  { title:"Choose a new password", sub:"Enter a new password for your account.", btn:"Save new password", pass:true, newPass:true, email:false, alt:"" }
+};
+function openAuth(m){
+  authMode = m; const c = AUTH[m], dlg = document.getElementById("authDlg");
+  document.getElementById("authTitle").textContent = c.title;
+  document.getElementById("authSub").textContent = c.sub;
+  document.getElementById("authSubmit").textContent = c.btn;
+  document.getElementById("authAlt").innerHTML = c.alt;
+  document.getElementById("authEmailWrap").hidden = c.email === false;
+  document.getElementById("authPassWrap").hidden = !c.pass;
+  document.getElementById("authPass").setAttribute("autocomplete", c.newPass ? "new-password" : "current-password");
+  document.getElementById("authPass").value = "";
+  const msg = document.getElementById("authMsg"); msg.textContent = ""; msg.className = "auth-msg";
+  if(!dlg.open){ try { dlg.showModal(); } catch(e){ dlg.setAttribute("open",""); } }
+  setTimeout(() => document.getElementById(c.email === false ? "authPass" : "authEmail").focus(), 30);
+}
+function authMsg(t, ok){ const m = document.getElementById("authMsg"); m.textContent = t; m.className = "auth-msg " + (ok ? "ok" : "err"); }
+function closeAuth(){ const d = document.getElementById("authDlg"); if(d.open){ try { d.close(); } catch(e){ d.removeAttribute("open"); } } }
+
+document.getElementById("authClose").addEventListener("click", closeAuth);
+document.addEventListener("click", function(ev){
+  const b = ev.target.closest("[data-auth]"); if(!b) return;
+  if(b.dataset.auth === "logout"){ sb.auth.signOut(); return; }
+  openAuth(b.dataset.auth);
+});
+document.getElementById("authForm").addEventListener("submit", async function(ev){
+  ev.preventDefault(); if(!sb) return;
+  const email = document.getElementById("authEmail").value.trim(), password = document.getElementById("authPass").value;
+  const btn = document.getElementById("authSubmit"); const c = AUTH[authMode];
+  if(c.email !== false && !/^\S+@\S+\.\S+$/.test(email)) return authMsg("Enter a valid email address.");
+  if(c.pass && c.newPass && password.length < 8) return authMsg("Use at least 8 characters for your password.");
+  if(c.pass && !password) return authMsg("Enter your password.");
+  btn.disabled = true; authMsg("Please wait…", true);
+  try {
+    if(authMode === "signup"){
+      const { data, error } = await sb.auth.signUp({ email, password, options: { emailRedirectTo: hereURL() } });
+      if(error) authMsg(error.message);
+      else if(data.session) closeAuth();
+      else authMsg("Almost done: check your inbox and click the confirmation link, then log in.", true);
+    } else if(authMode === "login"){
+      const { error } = await sb.auth.signInWithPassword({ email, password });
+      if(error) authMsg(/invalid/i.test(error.message) ? "That email and password don't match. Try again or reset your password." : /confirm/i.test(error.message) ? "Please confirm your email first: check your inbox for the link." : error.message);
+      else closeAuth();
+    } else if(authMode === "forgot"){
+      const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: hereURL() });
+      authMsg(error ? error.message : "If that email has an account, a reset link is on its way.", !error);
+    } else if(authMode === "reset"){
+      const { error } = await sb.auth.updateUser({ password });
+      if(error) authMsg(error.message); else { authMsg("Password updated. You're logged in.", true); setTimeout(closeAuth, 1200); }
+    }
+  } finally { btn.disabled = false; }
 });
 
 // ---------- start ----------
@@ -748,7 +933,7 @@ document.getElementById("entryForm").addEventListener("submit", function(ev){
   document.getElementById("eDate").value = iso;
   renderDiaryOptions(); renderAll();
   setSaveMsg("Connecting…");
-  if(!(window.claude && typeof window.claude.use === "function")){ mode = "local"; loadLocal(); renderAll(); setSaveMsg("Saved in this browser only."); return; }
+  if(!(window.claude && typeof window.claude.use === "function")){ startCloud(); return; }
   Promise.resolve(window.claude.use("artifact")).then(function(api){
     if(api){ artifactApi = api; mode = "artifact"; setSaveMsg("Entries are saved to this page."); }
     else { mode = "local"; loadLocal(); renderAll(); setSaveMsg("Saved in this browser only."); }

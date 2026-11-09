@@ -21,9 +21,25 @@ It's a single HTML file with no build step. Open `index.html` in a browser.
 3. Pick the `main` branch and the `/ (root)` folder, then **Save**.
 4. After a minute the site is live at `https://<your-username>.github.io/<repo-name>/`.
 
-## Where data is saved
+## Accounts and saved data
 
-On GitHub Pages, diary entries, the shortlist and checklist ticks are saved in your browser (localStorage). They stay on that browser and device only. Clearing browser data deletes them.
+Visitors can **sign up with email and password** and log in to see their saved diary, shortlist and checklist on any device. Accounts and data are stored in Supabase (project `gradjournal`):
+
+- `diary_entries`: one row per diary entry
+- `user_state`: each user's shortlist and checklist ticks
+
+Row Level Security is on for both tables, so each user can only read and change their own rows. The key in `index.html` is Supabase's public **anon** key, which is safe in browser code because of these policies. The table setup is in `supabase/migrations/`.
+
+Without an account, entries are saved in the browser only. When someone logs in, anything saved in that browser is moved into their account.
+
+### Supabase settings for the live site
+
+In the Supabase dashboard, open **Authentication → URL Configuration** and set:
+
+- **Site URL**: `https://fransisca-n-d.github.io/gradjournal/`
+- **Redirect URLs**: add `https://fransisca-n-d.github.io/gradjournal/`
+
+This makes the sign-up confirmation and password-reset emails link back to the site.
 
 ## Updating university data
 

@@ -208,6 +208,15 @@ h3{font-size:19px;line-height:1.25;margin:0;font-weight:900;text-wrap:balance}
 .journey-count{font-weight:900;color:var(--mint-dark);white-space:nowrap}
 .road-scroll{overflow-x:auto;border-radius:18px}
 .road{display:block;width:100%;min-width:760px;height:auto}
+.road path,.road ellipse,.road rect,.road .beaver{pointer-events:none}
+.stop{cursor:pointer;outline:none}
+.stop circle{transition:transform .2s cubic-bezier(.2,.8,.3,1.5);transform-box:fill-box;transform-origin:center}
+.stop:hover circle,.stop:focus-visible circle,.stop.open circle{transform:scale(1.25)}
+.stop:focus-visible circle{stroke:#fffaf3;stroke-width:5}
+.stop-help{margin-top:12px;background:var(--white);border:1px solid var(--line);border-radius:14px;padding:10px 14px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:14.5px}
+.stop-help > span:first-child{flex:1;min-width:240px}
+.stop-help .badge{margin:0 4px}
+.stop-help .small{color:var(--muted);font-size:14px}
 .stop-label{font-family:var(--font);font-size:14px;font-weight:900;fill:#2b1d14;paint-order:stroke;stroke:#a8d08d;stroke-width:5px}
 .stop:not(.done) .stop-label{fill:#5c4432}
 @media (prefers-reduced-motion:no-preference){.beaver{animation:bob 2.4s ease-in-out infinite;transform-box:fill-box;transform-origin:bottom}@keyframes bob{50%{transform:translateY(-4px)}}}
@@ -978,16 +987,35 @@ document.getElementById("entryForm").addEventListener("submit", function(ev){
 
 // ---------- journey road ----------
 const MILESTONES = [
-  ["Research", "Started researching", s => s.entries.length > 0 || s.shortlist.length > 0],
-  ["Shortlist", "Shortlisted a university", s => s.shortlist.length > 0],
-  ["Applications", "Started an application", s => s.entries.some(e => e.course)],
-  ["Documents", "Shared documents half ready", s => CHECK.filter(c => s.checked[c[0]]).length >= Math.ceil(CHECK.length / 2)],
-  ["Statement", "Wrote a personal statement", s => s.entries.some(a => a.course && a.checked && a.checked.statement)],
-  ["Applied", "Submitted an application", s => s.entries.some(a => a.course && a.checked && a.checked.submitted) || s.entries.some(e => e.kind === "Applied")],
-  ["Decision", "Heard back", s => s.entries.some(a => a.course && a.checked && a.checked.decision) || s.entries.some(e => e.kind === "Interview" || e.kind === "Offer" || e.kind === "Rejected")],
-  ["Offer", "Accepted an offer", s => s.entries.some(a => a.course && a.checked && a.checked.accepted) || s.entries.some(e => e.kind === "Offer")],
-  ["CAS & visa", "Got your CAS and visa", s => s.entries.some(a => a.course && a.checked && a.checked.cas) && !!s.checked.visa]
+  ["Research", "Start researching", s => s.entries.length > 0 || s.shortlist.length > 0],
+  ["Shortlist", "Shortlist a university", s => s.shortlist.length > 0],
+  ["Applications", "Start an application", s => s.entries.some(e => e.course)],
+  ["Documents", "Get your documents ready", s => CHECK.filter(c => s.checked[c[0]]).length >= Math.ceil(CHECK.length / 2) || s.entries.some(a => a.course && a.checked && a.checked.extras)],
+  ["Statement", "Write a personal statement", s => s.entries.some(a => a.course && a.checked && a.checked.statement)],
+  ["Applied", "Submit an application", s => s.entries.some(a => a.course && a.checked && a.checked.submitted) || s.entries.some(e => e.kind === "Applied")],
+  ["Decision", "Hear back", s => s.entries.some(a => a.course && a.checked && a.checked.decision) || s.entries.some(e => e.kind === "Interview" || e.kind === "Offer" || e.kind === "Rejected")],
+  ["Offer", "Accept an offer", s => s.entries.some(a => a.course && a.checked && a.checked.accepted) || s.entries.some(e => e.kind === "Offer")],
+  ["CAS & visa", "Get your CAS and visa", s => s.entries.some(a => a.course && a.checked && a.checked.cas) && !!s.checked.visa]
 ];
+const STOP_HOW = [
+  s => ["Write any diary entry or shortlist a university.", "entryForm"],
+  s => ["Click \u201cAdd to shortlist\u201d on a university card.", "universities"],
+  s => ["Add a diary entry with a university and a course.", "entryForm"],
+  s => ["Tick at least " + Math.ceil(CHECK.length / 2) + " of the " + CHECK.length + " shared documents (" + CHECK.filter(c => s.checked[c[0]]).length + " ticked so far), or tick \u201cExtra documents this course asks for\u201d in one of your applications.", "checklist"],
+  s => ["Tick \u201cPersonal statement written for this course\u201d in an application.", "entries"],
+  s => ["Tick \u201cApplication submitted\u201d in an application, or add a diary entry with the type \u201cApplied\u201d.", "entries"],
+  s => ["Tick \u201cDecision received\u201d in an application, or add an Interview, Offer or Rejected entry.", "entries"],
+  s => ["Tick \u201cOffer accepted and deposit paid\u201d in an application, or add an Offer entry.", "entries"],
+  s => ["Tick \u201cCAS received\u201d in an application and \u201cStudent visa application\u201d in the Documents checklist.", "checklist"]
+];
+let openStop = null;
+function renderStopHelp(){
+  const box = document.getElementById("stopHelp"); if(!box) return;
+  if(openStop === null){ box.innerHTML = '<span class="small">Tip: click any stop on the road to see how to tick it off.</span>'; return; }
+  const m = MILESTONES[openStop], done = !!m[2](state), [how, target] = STOP_HOW[openStop](state);
+  box.innerHTML = '<span><strong>' + (openStop + 1) + ' · ' + esc(m[0]) + '</strong> ' + (done ? '<span class="badge">Done</span>' : '<span class="badge amber">Not yet</span>') + ' ' + (done ? "Nice work. " : "") + esc(done ? "" : how) + '</span>'
+    + (done ? "" : '<button type="button" class="btn small" data-goto="' + target + '">Show me</button>') + '<button type="button" class="plain" data-stopclose="1">Close</button>';
+}
 const BEAVER = '<g class="beaver">'
  + '<ellipse cx="60" cy="134" rx="34" ry="6" fill="#2b1d14" opacity=".18"/>'
  + '<g transform="rotate(-28 92 112)"><ellipse cx="100" cy="112" rx="13" ry="25" fill="#6b3f22" stroke="#2b1d14" stroke-width="3"/><path d="M92 100l16 8M92 110l16 8M92 120l16 8M96 92l-2 38M104 92l-2 38" stroke="#8d5631" stroke-width="2" fill="none"/></g>'
@@ -1005,6 +1033,17 @@ const BEAVER = '<g class="beaver">'
  + '<path d="M28 26L60 14l32 12-32 12z" fill="#2b1d14"/><path d="M44 32v8c8 4 24 4 32 0v-8" fill="#4b3627"/>'
  + '<path d="M86 28v14" stroke="#a8d08d" stroke-width="3"/><circle cx="86" cy="44" r="3.5" fill="#a8d08d"/>'
  + '</g>';
+document.addEventListener("click", function(ev){
+  const s = ev.target.closest("[data-stop]");
+  if(s){ const i = +s.dataset.stop; openStop = openStop === i ? null : i; renderJourney(); return; }
+  if(ev.target.closest("[data-stopclose]")){ openStop = null; renderJourney(); return; }
+  const g = ev.target.closest("[data-goto]");
+  if(g){ const el = document.getElementById(g.dataset.goto); if(el){ el.scrollIntoView({block:"start"}); const f = el.querySelector("input,select,button"); if(f) setTimeout(() => f.focus({preventScroll:true}), 300); } }
+});
+document.addEventListener("keydown", function(ev){
+  const s = ev.target.closest && ev.target.closest("[data-stop]");
+  if(s && (ev.key === "Enter" || ev.key === " ")){ ev.preventDefault(); const i = +s.dataset.stop; openStop = openStop === i ? null : i; renderJourney(); const n = document.querySelector('[data-stop="'+i+'"]'); if(n) n.focus(); }
+});
 function renderJourney(){
   const box = document.getElementById("journey"); if(!box) return;
   let reached = -1; const doneArr = MILESTONES.map(m => !!m[2](state));
@@ -1024,14 +1063,14 @@ function renderJourney(){
     + '<path id="roadPath" d="'+d+'" fill="none" stroke="#e7d3b1" stroke-width="40" stroke-linecap="round"/>'
     + '<path d="'+d+'" fill="none" stroke="#d2b98f" stroke-width="40" stroke-linecap="round" opacity=".35" transform="translate(0,3)"/>'
     + '<path d="'+d+'" fill="none" stroke="#fffdf9" stroke-width="3" stroke-dasharray="12 12" stroke-linecap="round"/>'
-    + '<g id="stops"></g><g id="beaverSpot"></g></svg></div>';
+    + '<g id="stops"></g><g id="beaverSpot"></g></svg></div><div class="stop-help" id="stopHelp" aria-live="polite"></div>';
   const path = box.querySelector("#roadPath"), L = path.getTotalLength(), n = MILESTONES.length;
   let stops = "";
   const pts = MILESTONES.map((m, i) => { const p = path.getPointAtLength(L * (0.03 + 0.94 * i / (n - 1))); return {x: p.x, y: p.y}; });
   pts.forEach((p, i) => {
     const done = doneArr[i], above = p.y > 120 && i !== Math.max(reached, 0);
     const ly = above ? p.y - 26 : p.y + 38;
-    stops += '<g class="stop'+(done?" done":"")+'"><circle cx="'+p.x+'" cy="'+p.y+'" r="13" fill="'+(done?"#4e7d32":"#fffdf9")+'" stroke="#2b1d14" stroke-width="3"/>'
+    stops += '<g class="stop'+(done?" done":"")+(openStop===i?" open":"")+'" role="button" tabindex="0" data-stop="'+i+'" aria-label="Stop '+(i+1)+': '+esc(MILESTONES[i][0])+(done?", done":", not done yet")+'. Show how to complete it."><circle cx="'+p.x+'" cy="'+p.y+'" r="13" fill="'+(done?"#4e7d32":"#fffdf9")+'" stroke="#2b1d14" stroke-width="3"/>'
       + (done ? '<path d="M'+(p.x-5)+','+p.y+' l4,4 l7,-8" stroke="#fffdf9" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>' : '<text x="'+p.x+'" y="'+(p.y+4.5)+'" text-anchor="middle" font-size="12" font-weight="900" fill="#2b1d14">'+(i+1)+'</text>')
       + '<text x="'+p.x+'" y="'+ly+'" text-anchor="middle" class="stop-label">'+esc(MILESTONES[i][0])+'</text></g>';
   });
@@ -1040,6 +1079,7 @@ function renderJourney(){
   const star = (x, y, s, c) => '<path class="sparkle '+c+'" d="M'+x+','+(y-s)+' Q'+x+','+y+' '+(x+s)+','+y+' Q'+x+','+y+' '+x+','+(y+s)+' Q'+x+','+y+' '+(x-s)+','+y+' Q'+x+','+y+' '+x+','+(y-s)+'Z" fill="#fffaf3"/>';
   box.querySelector("#beaverSpot").innerHTML = '<g transform="translate('+(at.x - 44)+','+(at.y - 106)+') scale(.72)">' + BEAVER + '</g>'
     + star(at.x + 44, at.y - 92, 7, "s1") + star(at.x + 58, at.y - 70, 4.5, "s2") + star(at.x - 40, at.y - 84, 5, "s3");
+  renderStopHelp();
 }
 
 // ---------- accounts (Supabase) ----------
@@ -1154,7 +1194,7 @@ function renderAcct(){
   const nav = document.getElementById("acctNav"), ban = document.getElementById("acctBanner");
   if(mode !== "cloud" || !sb){ nav.innerHTML = ""; ban.innerHTML = ""; return; }
   if(user){
-    nav.innerHTML = '<span class="who-pill" title="'+esc(user.email)+'">'+esc(user.email)+'</span> <button type="button" class="btn small acct-btn" data-auth="logout">Log out</button>';
+    nav.innerHTML = '<button type="button" class="btn small acct-btn" data-auth="logout" title="Signed in as '+esc(user.email)+'">Log out</button>';
     ban.innerHTML = '<div class="acct-banner in"><span>Signed in as <strong>'+esc(user.email)+'</strong>. Your diary, shortlist and checklist are saved to your account.</span><button type="button" class="plain" data-auth="logout">Log out</button></div>';
   } else {
     nav.innerHTML = '<button type="button" class="btn small acct-btn" data-auth="login">Log in</button> <button type="button" class="btn primary small acct-btn" data-auth="signup">Sign up</button>';

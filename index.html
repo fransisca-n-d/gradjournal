@@ -1252,7 +1252,7 @@ function renderAcct(){
 
 // Bot protection (Cloudflare Turnstile). Paste the public site key here once the widget exists,
 // THEN switch on CAPTCHA in Supabase (Authentication > Bot and Abuse Protection). Empty = off.
-const TURNSTILE_SITEKEY = "";
+const TURNSTILE_SITEKEY = "0x4AAAAAAF5cmXY6LbCYSeD7";
 let tsWidget = null, captchaToken = null, tsLoading = null;
 function loadTurnstile(){
   if(!TURNSTILE_SITEKEY) return Promise.resolve(false);

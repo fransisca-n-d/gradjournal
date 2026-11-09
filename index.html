@@ -305,7 +305,7 @@ footer a{text-decoration:none} footer a:hover{text-decoration:underline;color:#f
         <h3>New entry</h3>
         <label for="eDate">Date<input type="date" id="eDate" required></label>
         <label for="eUni">University<select id="eUni"><option value="">General</option></select></label>
-        <label for="eCourse">Course (optional)<input type="text" id="eCourse" maxlength="200" placeholder="e.g. MSc Data Science"></label>
+        <label for="eCourse">Course (optional)<input type="text" id="eCourse" maxlength="200" placeholder="Start typing, e.g. MSc Data Science" list="courseList" autocomplete="off"><datalist id="courseList"></datalist></label>
         <label for="eDeadline" id="eDeadlineWrap">Course deadline (optional)<input type="date" id="eDeadline"></label>
         <p class="form-hint" id="eHint">Add a course to get a checklist for this application.</p>
         <label for="eKind">Type<select id="eKind">
@@ -795,6 +795,15 @@ function renderTimeline(){
 }
 
 // ---------- diary ----------
+const COMMON_COURSES = ["MSc Computer Science","MSc Advanced Computer Science","MSc Artificial Intelligence","MSc Machine Learning","MSc Data Science","MSc Data Analytics","MSc Business Analytics","MSc Software Engineering","MSc Cyber Security","MSc Human-Computer Interaction","MSc Information Systems","MSc Digital Transformation","MSc Management","MSc International Management","MSc International Business","MSc Marketing","MSc Digital Marketing","MSc Finance","MSc Accounting and Finance","MSc Financial Economics","MSc Economics","MSc Project Management","MSc Engineering Management","MSc Entrepreneurship and Innovation","MSc Supply Chain Management","MSc Human Resource Management","MSc Tourism Management","MSc Real Estate","MBA","MSc Statistics","MSc Mathematics","MSc Physics","MSc Public Health","MSc Global Health","MSc Psychology","MSc Psychology (Conversion)","MSc Neuroscience","MSc Biotechnology","MSc Mechanical Engineering","MSc Electrical and Electronic Engineering","MSc Civil Engineering","MSc Chemical Engineering","MSc Renewable Energy","MSc Sustainability","MSc Environmental Science","MSc Urban Planning","MArch Architecture","MSc International Development","MSc Development Studies","MA International Relations","MSc Public Policy","MPA Public Administration","MA Education","MA TESOL","MA Applied Linguistics","MA Translation","LLM Law","LLM International Law","MA English Literature","MA Creative Writing","MA History","MA Media and Communications","MA Journalism","MA Film Studies","MA Design","MA Fine Art"];
+function renderCourseList(){
+  const uni = document.getElementById("eUni").value;
+  const mine = state.entries.filter(e => e.course);
+  const sameUni = mine.filter(e => uni && e.uni === uni).map(e => e.course);
+  const other = mine.filter(e => !uni || e.uni !== uni).map(e => e.course);
+  const all = Array.from(new Set(sameUni.concat(other, COMMON_COURSES)));
+  document.getElementById("courseList").innerHTML = all.map(c => '<option value="'+esc(c)+'"></option>').join("");
+}
 function renderDiaryOptions(){
   const opts = UNIS.map(u => '<option value="'+u.id+'">'+esc(u.name)+'</option>').join("");
   document.getElementById("eUni").innerHTML = '<option value="">General</option>' + opts;
@@ -836,7 +845,7 @@ function renderChecklist(){
   document.getElementById("checkList").innerHTML = CHECK.map(([k,t,w]) => '<li class="'+(state.checked[k]?"done":"")+'"><input type="checkbox" id="c-'+k+'" data-check="'+k+'" '+(state.checked[k]?"checked":"")+'><label for="c-'+k+'"><span>'+esc(t)+'</span><span class="why">'+esc(w)+'</span></label></li>').join("");
 }
 
-function renderAll(){ renderHero(); renderTiles(); renderSysFilter(); renderUnis(); renderNumbers(); renderTimeline(); renderEntries(); renderChecklist(); renderJourney(); }
+function renderAll(){ renderHero(); renderTiles(); renderSysFilter(); renderUnis(); renderNumbers(); renderTimeline(); renderEntries(); renderChecklist(); renderJourney(); renderCourseList(); }
 
 // ---------- events ----------
 function jumpTo(id){
@@ -883,6 +892,7 @@ document.addEventListener("submit", function(ev){
   setTimeout(() => { const el = document.getElementById("ai-" + a.id); if(el) el.focus(); }, 0);
 });
 document.getElementById("q").addEventListener("input", renderUnis);
+document.getElementById("eUni").addEventListener("change", renderCourseList);
 document.getElementById("heroSearch").addEventListener("submit", function(ev){
   ev.preventDefault();
   document.getElementById("q").value = document.getElementById("heroQ").value;

@@ -181,6 +181,15 @@ h3{font-size:19px;line-height:1.25;margin:0;font-weight:900;text-wrap:balance}
 .tl .u{font-weight:700;display:block}
 
 /* diary */
+.diary-first{padding-top:48px}
+.kicker2{display:inline-block;font-size:13px;font-weight:900;letter-spacing:.04em;text-transform:uppercase;color:var(--mint-dark);margin-bottom:6px}
+.form-hint{margin:-4px 0 0;font-size:12.5px;color:#b49e88}
+.entries .course{font-size:18px;font-weight:900;margin:8px 0 2px}
+.entries .dl{font-size:14px;color:var(--muted)} .entries .dl strong{color:var(--deadline)}
+.appbox{margin-top:12px;padding-top:12px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:10px}
+.appbox .prog{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:700}
+.appbox .prog .progress{flex:1;min-width:0;height:8px}
+.entries li.is-app{border-left:4px solid var(--mint-dark)}
 .journey{background:var(--soft);border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:28px}
 .journey-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:12px}
 .journey-head h3{font-size:22px}
@@ -270,13 +279,13 @@ footer a{text-decoration:none} footer a:hover{text-decoration:underline;color:#f
 
 <header class="nav">
   <div class="wrap">
-    <a class="brand" href="#top"><span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#a8d08d" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2 9 2 12 0v-5"/></svg></span><span>Grad<span class="bj">Journal</span></span></a>
+    <a class="brand" href="#diary"><span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#a8d08d" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2 9 2 12 0v-5"/></svg></span><span>Grad<span class="bj">Journal</span></span></a>
     <nav class="menu" aria-label="Main">
+      <a href="#diary">My diary</a>
       <a href="#first-up">First up</a>
       <a href="#universities">Universities</a>
       <a href="#timeline">Timeline</a>
-      <a href="#diary">My diary</a>
-      <a href="#checklist">Applications</a>
+      <a href="#checklist">Documents</a>
       <a href="#faq">FAQ</a>
     </nav>
     <div class="nav-right">
@@ -287,7 +296,38 @@ footer a{text-decoration:none} footer a:hover{text-decoration:underline;color:#f
   </div>
 </header>
 
-<section class="hero" id="top">
+<section class="band diary-first" id="diary">
+  <div class="wrap">
+    <div class="sec-head"><div><span class="kicker2">Your UK master's journal</span><h2>Your road to a UK master's</h2><p>Log every step of your applications. Add a course to an entry and it gets its own checklist.</p></div></div>
+    <div class="journey" id="journey"></div>
+    <div class="diary">
+      <form class="entry" id="entryForm" novalidate>
+        <h3>New entry</h3>
+        <label for="eDate">Date<input type="date" id="eDate" required></label>
+        <label for="eUni">University<select id="eUni"><option value="">General</option></select></label>
+        <label for="eCourse">Course (optional)<input type="text" id="eCourse" maxlength="200" placeholder="e.g. MSc Data Science"></label>
+        <label for="eDeadline" id="eDeadlineWrap">Course deadline (optional)<input type="date" id="eDeadline"></label>
+        <p class="form-hint" id="eHint">Add a course to get a checklist for this application.</p>
+        <label for="eKind">Type<select id="eKind">
+          <option>Research</option><option>Writing</option><option>Applied</option><option>Interview</option><option>Offer</option><option>Rejected</option><option>Funding</option><option>Note</option>
+        </select></label>
+        <label for="eText">What happened?<textarea id="eText" maxlength="5000" placeholder="e.g. Finished the first draft of my personal statement for Edinburgh."></textarea></label>
+        <button class="btn mint" type="submit">Add to diary</button>
+        <div class="savebar" id="saveState" aria-live="polite"></div>
+      </form>
+      <div>
+        <div id="acctBanner"></div>
+        <div class="diary-tools">
+          <label class="visually-hidden" for="dFilter">Filter diary</label>
+          <select id="dFilter"><option value="">All entries</option></select>
+        </div>
+        <ul class="entries" id="entries"></ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="hero" id="search">
   <div class="wrap">
     <div>
       <span class="kicker">UK taught master's · 30 universities</span>
@@ -359,47 +399,11 @@ footer a{text-decoration:none} footer a:hover{text-decoration:underline;color:#f
   </div>
 </section>
 
-<section class="band" id="diary">
-  <div class="wrap">
-    <div class="sec-head"><div><h2>My application diary</h2><p>A dated log of the journey: research, statements, submissions, interviews and offers.</p></div></div>
-    <div class="journey" id="journey"></div>
-    <div class="diary">
-      <form class="entry" id="entryForm">
-        <h3>New entry</h3>
-        <label for="eDate">Date<input type="date" id="eDate" required></label>
-        <label for="eUni">University<select id="eUni"><option value="">General</option></select></label>
-        <label for="eKind">Type<select id="eKind">
-          <option>Research</option><option>Writing</option><option>Applied</option><option>Interview</option><option>Offer</option><option>Rejected</option><option>Funding</option><option>Note</option>
-        </select></label>
-        <label for="eText">What happened?<textarea id="eText" required maxlength="5000" placeholder="e.g. Finished the first draft of my personal statement for Edinburgh."></textarea></label>
-        <button class="btn mint" type="submit">Add to diary</button>
-        <div class="savebar" id="saveState" aria-live="polite"></div>
-      </form>
-      <div>
-        <div id="acctBanner"></div>
-        <div class="diary-tools">
-          <label class="visually-hidden" for="dFilter">Filter diary</label>
-          <select id="dFilter"><option value="">All entries</option></select>
-        </div>
-        <ul class="entries" id="entries"></ul>
-      </div>
-    </div>
-  </div>
-</section>
+
 
 <section class="band grey" id="checklist">
   <div class="wrap">
-    <div class="sec-head"><div><h2>My applications</h2><p>Add each university and course you're applying to. Each one gets its own checklist, and anything with a deadline appears in the timeline.</p></div></div>
-    <form class="appform" id="appForm" novalidate>
-      <label for="aUni">University<select id="aUni" required></select></label>
-      <label for="aCourse">Course<input type="text" id="aCourse" maxlength="200" placeholder="e.g. MSc Data Science" required></label>
-      <label for="aDeadline">Deadline (optional)<input type="date" id="aDeadline"></label>
-      <button class="btn primary" type="submit">Add application</button>
-    </form>
-    <div class="device-note" id="appNote" aria-live="polite"></div>
-    <div class="apps" id="appList"></div>
-
-    <div class="subhead"><div><h3>Shared documents</h3><p class="note" style="margin-top:6px">Things you prepare once and reuse for every application.</p></div>
+    <div class="sec-head"><div><h2>Documents checklist</h2><p>Things you prepare once and reuse for every application. Each course's own steps are in its diary entry.</p></div>
       <div><div id="checkCount" style="font-weight:700;margin-bottom:6px"></div><div class="progress"><div id="checkBar" style="width:0"></div></div><div class="device-note" id="checkNote"></div></div></div>
     <ul class="check" id="checkList"></ul>
   </div>
@@ -428,9 +432,9 @@ footer a{text-decoration:none} footer a:hover{text-decoration:underline;color:#f
 <footer>
   <div class="wrap">
     <div class="fcols">
-      <div><a class="brand" href="#top" style="color:#fff"><span class="mark" aria-hidden="true" style="background:#3a291d"><svg viewBox="0 0 24 24" fill="none" stroke="#a8d08d" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2 9 2 12 0v-5"/></svg></span><span>Grad<span class="bj">Journal</span></span></a><p style="max-width:34ch">A personal planner for UK taught master's applications, September 2027 entry.</p></div>
+      <div><a class="brand" href="#diary" style="color:#fff"><span class="mark" aria-hidden="true" style="background:#3a291d"><svg viewBox="0 0 24 24" fill="none" stroke="#a8d08d" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2 9 2 12 0v-5"/></svg></span><span>Grad<span class="bj">Journal</span></span></a><p style="max-width:34ch">A personal planner for UK taught master's applications, September 2027 entry.</p></div>
       <div><h4>Plan</h4><ul><li><a href="#first-up">First up</a></li><li><a href="#universities">Universities</a></li><li><a href="#timeline">Timeline</a></li></ul></div>
-      <div><h4>Track</h4><ul><li><a href="#diary">My diary</a></li><li><a href="#checklist">Applications</a></li></ul></div>
+      <div><h4>Track</h4><ul><li><a href="#diary">My diary</a></li><li><a href="#checklist">Documents</a></li></ul></div>
       <div><h4>Help</h4><ul><li><a href="#faq">FAQ</a></li><li><a href="https://www.gov.uk/student-visa" target="_blank" rel="noopener">UK Student visa (GOV.UK) ↗</a></li></ul></div>
     </div>
     <div class="legal">University facts come from each university's admissions pages where available, and from application-guide sites (marked "guide site") where not. Deadlines change; confirm on the official course page before applying.</div>
@@ -653,7 +657,16 @@ const SCHOLAR = /scholarship|funding|financial support/i;
 // ---------- state ----------
 let state;
 try { state = JSON.parse(document.getElementById("state").textContent); } catch(e){ state = {entries:[],shortlist:[],checked:{}}; }
-state.entries = state.entries || []; state.shortlist = state.shortlist || []; state.checked = state.checked || {}; state.apps = state.apps || [];
+function normalize(s){
+  s = s || {}; s.entries = s.entries || []; s.shortlist = s.shortlist || []; s.checked = s.checked || {};
+  if(Array.isArray(s.apps) && s.apps.length){
+    const iso = new Date().toISOString().slice(0,10);
+    s.apps.forEach(a => s.entries.push({ id: a.id, date: iso, uni: a.uni, kind: "Note", text: "Started my application for " + a.course + ".", course: a.course, deadline: a.deadline || "", checked: a.checked || {}, custom: a.custom || [] }));
+  }
+  delete s.apps;
+  return s;
+}
+state = normalize(state);
 let artifactApi = null, mode = "pending", saveTimer = null;
 const LSKEY = "uk-masters-journal-v1";
 function setSaveMsg(t){ const el = document.getElementById("saveState"); if(el) el.textContent = t; }
@@ -749,7 +762,7 @@ function renderUnis(){
     const n = state.entries.filter(e => e.uni === u.id).length;
     return '<article class="card'+(isStar(u.id)?" star":"")+'" id="u-'+u.id+'"><div class="card-head"><div><h3>'+esc(u.name)+'</h3><div class="city">'+esc(u.city)+'</div></div><span class="badge '+sysBadge(u.sys)+'">'+SYS[u.sys]+'</span></div>'
       + dates + facts + (u.note ? '<p class="note">'+esc(u.note)+'</p>' : "")
-      + '<div class="actions"><button type="button" class="btn small" data-star="'+u.id+'" aria-pressed="'+isStar(u.id)+'">'+(isStar(u.id)?"★ Shortlisted":"☆ Add to shortlist")+'</button><button type="button" class="btn small" data-note="'+u.id+'">Diary note'+(n?" ("+n+")":"")+'</button><button type="button" class="btn small" data-addapp="'+u.id+'">+ Application</button>'+links+'</div></article>';
+      + '<div class="actions"><button type="button" class="btn small" data-star="'+u.id+'" aria-pressed="'+isStar(u.id)+'">'+(isStar(u.id)?"★ Shortlisted":"☆ Add to shortlist")+'</button><button type="button" class="btn small" data-note="'+u.id+'">Diary note'+(n?" ("+n+")":"")+'</button>'+links+'</div></article>';
   }).join("");
 }
 
@@ -757,7 +770,7 @@ function renderUnis(){
 function renderNumbers(){
   const ds = allDates().filter(x => days(x.d) >= 0);
   const rounds = UNIS.filter(u => u.sys === "rounds").length, rolling = UNIS.filter(u => u.sys === "rolling").length;
-  const applied = state.apps.filter(a => a.checked && a.checked.submitted).length || state.entries.filter(e => e.kind === "Applied").length;
+  const applied = state.entries.filter(e => e.course && e.checked && e.checked.submitted).length || state.entries.filter(e => e.kind === "Applied").length;
   document.getElementById("statgrid").innerHTML = [
     [UNIS.length, "universities covered"],
     [ds.length, "upcoming dated deadlines"],
@@ -769,7 +782,7 @@ function renderNumbers(){
 // ---------- timeline ----------
 let tlStar = false, tlPast = false;
 function renderTimeline(){
-  const mine = (state.apps || []).filter(a => a.deadline).map(a => ({ d: a.deadline, l: "My application deadline: " + a.course, u: UNIS.find(x => x.id === a.uni) || {id:"", name:"My application"} }));
+  const mine = state.entries.filter(e => e.course && e.deadline).map(e => ({ d: e.deadline, l: "My application deadline: " + e.course, u: UNIS.find(x => x.id === e.uni) || {id:"", name:"My application"} }));
   const list = allDates().concat(mine).sort((x,y) => parse(x.d) - parse(y.d)).filter(x => (tlPast || days(x.d) >= 0) && (!tlStar || isStar(x.u.id)));
   const box = document.getElementById("tlList");
   if(!list.length){ box.innerHTML = '<div class="empty">Nothing to show. '+(tlStar?"Star some universities, or turn off “Shortlist only”.":"")+'</div>'; return; }
@@ -786,16 +799,32 @@ function renderDiaryOptions(){
   const opts = UNIS.map(u => '<option value="'+u.id+'">'+esc(u.name)+'</option>').join("");
   document.getElementById("eUni").innerHTML = '<option value="">General</option>' + opts;
   const f = document.getElementById("dFilter"), cur = f.value;
-  f.innerHTML = '<option value="">All entries</option><option value="_star">Shortlist only</option>' + opts;
+  f.innerHTML = '<option value="">All entries</option><option value="_apps">Applications (entries with a course)</option><option value="_star">Shortlisted universities</option>' + opts;
   f.value = cur;
+}
+let pendingDel = null;
+function appItems(a){ return APP_STEPS.map(([k,tx]) => ({k, t: tx, custom:false})).concat((a.custom || []).map(c => ({k: "c:" + c.id, t: c.text, custom:true, cid: c.id}))); }
+function appBox(a){
+  const items = appItems(a), done = items.filter(i => a.checked && a.checked[i.k]).length, pct = Math.round(done / items.length * 100);
+  const lis = items.map(i => { const id = "ac-" + a.id + "-" + i.k.replace(/[^a-z0-9]/gi,"_"); const on = a.checked && a.checked[i.k];
+    return '<li class="'+(on?"done":"")+'"><input type="checkbox" id="'+id+'" data-acheck="'+esc(a.id)+'" data-key="'+esc(i.k)+'" '+(on?"checked":"")+'><label for="'+id+'"><span>'+esc(i.t)+'</span></label>'+(i.custom?'<button type="button" class="rm" data-arm="'+esc(a.id)+'" data-cid="'+esc(i.cid)+'" aria-label="Remove item">×</button>':"")+'</li>'; }).join("");
+  return '<div class="appbox"><div class="prog"><span>'+done+' of '+items.length+' steps</span><div class="progress"><div style="width:'+pct+'%"></div></div></div>'
+    + '<ul class="check mini">'+lis+'</ul>'
+    + '<form class="additem" data-aadd="'+esc(a.id)+'"><label class="visually-hidden" for="ai-'+esc(a.id)+'">Add your own step</label><input id="ai-'+esc(a.id)+'" maxlength="140" placeholder="Add your own step, e.g. Upload portfolio"><button class="btn small" type="submit">Add</button></form></div>';
 }
 function renderEntries(){
   const f = document.getElementById("dFilter").value;
-  const list = state.entries.filter(e => !f || (f === "_star" ? isStar(e.uni) : e.uni === f)).slice().sort((a,b) => b.date.localeCompare(a.date) || String(b.created || b.id).localeCompare(String(a.created || a.id)));
+  const list = state.entries.filter(e => !f || (f === "_star" ? isStar(e.uni) : f === "_apps" ? !!e.course : e.uni === f)).slice().sort((a,b) => b.date.localeCompare(a.date) || String(b.created || b.id).localeCompare(String(a.created || a.id)));
   const ul = document.getElementById("entries");
   if(!list.length){ ul.innerHTML = (isGuest() && !f) ? '<li class="empty"><button type="button" class="plain" data-auth="login">Log in</button> to view your saved diary entries, or write your first one.</li>' : '<li class="empty">No entries yet for this filter.</li>'; return; }
   const kc = {Offer:"",Rejected:"red",Applied:"dark",Interview:"amber"};
-  ul.innerHTML = list.map(e => '<li><div class="meta"><span class="d">'+fmt(e.date)+'</span><span class="badge '+(kc[e.kind]||"")+'">'+esc(e.kind)+'</span><span>'+esc(uniName(e.uni))+'</span><button type="button" class="linkbtn" data-del="'+esc(e.id)+'">Delete</button></div><p>'+esc(e.text)+'</p></li>').join("");
+  ul.innerHTML = list.map(e => {
+    const dd = e.deadline ? days(e.deadline) : null;
+    const head = e.course ? '<div class="course">'+esc(e.course)+'</div><div class="dl">'+(e.deadline ? 'Deadline <strong>'+fmt(e.deadline)+'</strong>'+(dd >= 0 ? ' · '+dd+(dd === 1 ? " day" : " days")+' left' : ' · passed') : 'No deadline set')+'</div>' : "";
+    const del = pendingDel === e.id ? '<span class="linkbtn" style="text-decoration:none">Delete with its checklist? <button type="button" class="plain danger" data-del="'+esc(e.id)+'" data-confirm="1">Yes</button> · <button type="button" class="plain" data-del="'+esc(e.id)+'" data-confirm="0">No</button></span>' : '<button type="button" class="linkbtn" data-del="'+esc(e.id)+'">Delete</button>';
+    return '<li class="'+(e.course?"is-app":"")+'"><div class="meta"><span class="d">'+fmt(e.date)+'</span><span class="badge '+(kc[e.kind]||"")+'">'+esc(e.kind)+'</span><span>'+esc(uniName(e.uni))+'</span>'+del+'</div>'
+      + head + (e.text ? '<p>'+esc(e.text)+'</p>' : "") + (e.course ? appBox(e) : "") + '</li>';
+  }).join("");
 }
 
 // ---------- checklist ----------
@@ -807,31 +836,7 @@ function renderChecklist(){
   document.getElementById("checkList").innerHTML = CHECK.map(([k,t,w]) => '<li class="'+(state.checked[k]?"done":"")+'"><input type="checkbox" id="c-'+k+'" data-check="'+k+'" '+(state.checked[k]?"checked":"")+'><label for="c-'+k+'"><span>'+esc(t)+'</span><span class="why">'+esc(w)+'</span></label></li>').join("");
 }
 
-let pendingDel = null;
-function appItems(a){ return APP_STEPS.map(([k,t]) => ({k, t, custom:false})).concat((a.custom || []).map(c => ({k: "c:" + c.id, t: c.text, custom:true, cid: c.id}))); }
-function renderApps(){
-  const sel = document.getElementById("aUni"), cur = sel.value;
-  if(!sel.options.length) sel.innerHTML = '<option value="">Choose a university</option>' + UNIS.map(u => '<option value="'+u.id+'">'+esc(u.name)+'</option>').join("");
-  sel.value = cur;
-  document.getElementById("appNote").innerHTML = isGuest() && state.apps.length ? 'Saved on this device only. <button type="button" class="plain" data-auth="login">Log in</button> to keep your applications on any device.' : "";
-  const box = document.getElementById("appList");
-  if(!state.apps.length){ box.innerHTML = '<div class="empty">'+(isGuest() ? '<button type="button" class="plain" data-auth="login">Log in</button> to see your saved applications, or add your first one above.' : 'No applications yet. Add a university and course above, or use \u201c+ Application\u201d on any university card.')+'</div>'; return; }
-  const list = state.apps.slice().sort((a,b) => (a.deadline || "9999").localeCompare(b.deadline || "9999") || String(a.created || a.id).localeCompare(String(b.created || b.id)));
-  box.innerHTML = list.map(a => {
-    const items = appItems(a), done = items.filter(i => a.checked && a.checked[i.k]).length, pct = Math.round(done / items.length * 100);
-    const dd = a.deadline ? days(a.deadline) : null;
-    const dl = a.deadline ? 'Deadline <strong>'+fmt(a.deadline)+'</strong>'+(dd >= 0 ? ' · '+dd+(dd === 1 ? " day" : " days")+' left' : ' · passed') : 'No deadline set';
-    const lis = items.map(i => { const id = "ac-" + a.id + "-" + i.k.replace(/[^a-z0-9]/gi,"_"); const on = a.checked && a.checked[i.k];
-      return '<li class="'+(on?"done":"")+'"><input type="checkbox" id="'+id+'" data-acheck="'+esc(a.id)+'" data-key="'+esc(i.k)+'" '+(on?"checked":"")+'><label for="'+id+'"><span>'+esc(i.t)+'</span></label>'+(i.custom?'<button type="button" class="rm" data-arm="'+esc(a.id)+'" data-cid="'+esc(i.cid)+'" aria-label="Remove item">×</button>':"")+'</li>'; }).join("");
-    const del = pendingDel === a.id ? '<span>Delete this application? <button type="button" class="plain danger" data-adel="'+esc(a.id)+'" data-confirm="1">Yes, delete</button> · <button type="button" class="plain" data-adel="'+esc(a.id)+'" data-confirm="0">Cancel</button></span>' : '<button type="button" class="plain" data-adel="'+esc(a.id)+'">Delete application</button>';
-    return '<article class="app'+(done === items.length ? " complete" : "")+'" id="a-'+esc(a.id)+'"><div><div class="uni">'+esc(short(uniName(a.uni)))+'</div><h3>'+esc(a.course)+'</h3><div class="dl">'+dl+'</div></div>'
-      + '<div class="prog"><span>'+done+' of '+items.length+'</span><div class="progress"><div style="width:'+pct+'%"></div></div></div>'
-      + '<ul class="check mini">'+lis+'</ul>'
-      + '<form class="additem" data-aadd="'+esc(a.id)+'"><label class="visually-hidden" for="ai-'+esc(a.id)+'">Add your own item</label><input id="ai-'+esc(a.id)+'" maxlength="140" placeholder="Add your own item, e.g. Portfolio link"><button class="btn small" type="submit">Add</button></form>'
-      + '<div class="app-foot">'+del+'</div></article>';
-  }).join("");
-}
-function renderAll(){ renderHero(); renderTiles(); renderSysFilter(); renderUnis(); renderNumbers(); renderTimeline(); renderEntries(); renderApps(); renderChecklist(); renderJourney(); }
+function renderAll(){ renderHero(); renderTiles(); renderSysFilter(); renderUnis(); renderNumbers(); renderTimeline(); renderEntries(); renderChecklist(); renderJourney(); }
 
 // ---------- events ----------
 function jumpTo(id){
@@ -840,17 +845,19 @@ function jumpTo(id){
   const el = document.getElementById("u-" + id); if(el){ el.scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block:"center"}); }
 }
 document.addEventListener("click", function(ev){
-  const t = ev.target.closest("[data-star],[data-note],[data-sys],[data-del],[data-tab],[data-jump],[data-addapp],[data-adel],[data-arm],#starOnly,#tlStar,#tlPast");
+  const t = ev.target.closest("[data-star],[data-note],[data-sys],[data-del],[data-tab],[data-jump],[data-arm],#starOnly,#tlStar,#tlPast");
   if(!t) return;
-  if(t.dataset.addapp){ document.getElementById("aUni").value = t.dataset.addapp; document.getElementById("checklist").scrollIntoView(); setTimeout(() => document.getElementById("aCourse").focus({preventScroll:true}), 60); return; }
-  if(t.dataset.adel){ if(t.dataset.confirm === "1"){ pendingDel = null; removeApp(t.dataset.adel); } else { pendingDel = t.dataset.confirm === "0" ? null : t.dataset.adel; renderApps(); } return; }
-  if(t.dataset.arm){ const a = state.apps.find(x => x.id === t.dataset.arm); if(a){ a.custom = (a.custom || []).filter(c => c.id !== t.dataset.cid); delete a.checked["c:" + t.dataset.cid]; renderApps(); updateApp(a.id); } return; }
+  if(t.dataset.arm){ const a = state.entries.find(x => x.id === t.dataset.arm); if(a){ a.custom = (a.custom || []).filter(c => c.id !== t.dataset.cid); delete a.checked["c:" + t.dataset.cid]; renderEntries(); renderJourney(); updateEntry(a.id); } return; }
   if(t.dataset.star){ toggleStar(t.dataset.star); }
   else if(t.dataset.jump){ ev.preventDefault(); jumpTo(t.dataset.jump); }
   else if(t.dataset.tab){ tab = t.dataset.tab; renderTiles(); }
   else if(t.dataset.note){ document.getElementById("eUni").value = t.dataset.note; document.getElementById("diary").scrollIntoView(); setTimeout(() => document.getElementById("eText").focus({preventScroll:true}), 60); }
   else if(t.dataset.sys){ sysSel = t.dataset.sys; renderSysFilter(); renderUnis(); }
-  else if(t.dataset.del){ removeEntry(t.dataset.del); }
+  else if(t.dataset.del){
+    const en = state.entries.find(x => x.id === t.dataset.del);
+    if(t.dataset.confirm === "1" || (en && !en.course && !t.dataset.confirm)){ pendingDel = null; removeEntry(t.dataset.del); }
+    else { pendingDel = t.dataset.confirm === "0" ? null : t.dataset.del; renderEntries(); }
+  }
   else if(t.id === "starOnly"){ starOnly = !starOnly; t.setAttribute("aria-pressed", starOnly); renderUnis(); }
   else if(t.id === "tlStar"){ tlStar = !tlStar; t.setAttribute("aria-pressed", tlStar); renderTimeline(); }
   else if(t.id === "tlPast"){ tlPast = !tlPast; t.setAttribute("aria-pressed", tlPast); renderTimeline(); }
@@ -860,28 +867,19 @@ document.addEventListener("change", function(ev){
   if(k){ if(ev.target.checked) state.checked[k] = true; else delete state.checked[k]; renderChecklist(); renderHero(); renderJourney(); persistPrefs(ev.target.checked ? "checklist" : ""); }
   if(ev.target.id === "dFilter") renderEntries();
   if(ev.target.dataset && ev.target.dataset.acheck){
-    const a = state.apps.find(x => x.id === ev.target.dataset.acheck); if(!a) return;
+    const a = state.entries.find(x => x.id === ev.target.dataset.acheck); if(!a) return;
     a.checked = a.checked || {};
     if(ev.target.checked) a.checked[ev.target.dataset.key] = true; else delete a.checked[ev.target.dataset.key];
-    renderApps(); renderNumbers(); renderJourney(); updateApp(a.id);
+    renderEntries(); renderNumbers(); renderJourney(); updateEntry(a.id);
   }
-});
-document.getElementById("appForm").addEventListener("submit", function(ev){
-  ev.preventDefault();
-  const uni = document.getElementById("aUni").value, course = document.getElementById("aCourse").value.trim(), deadline = document.getElementById("aDeadline").value;
-  const note = document.getElementById("appNote");
-  if(!uni){ note.textContent = "Choose a university first."; document.getElementById("aUni").focus(); return; }
-  if(!course){ note.textContent = "Type the course name, e.g. MSc Data Science."; document.getElementById("aCourse").focus(); return; }
-  addApp({ id: "a" + Date.now().toString(36), uni, course, deadline, checked: {}, custom: [] });
-  document.getElementById("aCourse").value = ""; document.getElementById("aDeadline").value = "";
 });
 document.addEventListener("submit", function(ev){
   const f = ev.target.closest("form[data-aadd]"); if(!f) return;
   ev.preventDefault();
-  const a = state.apps.find(x => x.id === f.dataset.aadd), inp = f.querySelector("input"), text = inp.value.trim();
+  const a = state.entries.find(x => x.id === f.dataset.aadd), inp = f.querySelector("input"), text = inp.value.trim();
   if(!a || !text) return;
   a.custom = (a.custom || []).concat({ id: Date.now().toString(36), text });
-  renderApps(); updateApp(a.id);
+  renderEntries(); renderJourney(); updateEntry(a.id);
   setTimeout(() => { const el = document.getElementById("ai-" + a.id); if(el) el.focus(); }, 0);
 });
 document.getElementById("q").addEventListener("input", renderUnis);
@@ -893,22 +891,29 @@ document.getElementById("heroSearch").addEventListener("submit", function(ev){
 });
 document.getElementById("entryForm").addEventListener("submit", function(ev){
   ev.preventDefault();
-  const text = document.getElementById("eText").value.trim(); if(!text) return;
-  addEntry({ id: "e" + Date.now().toString(36), date: document.getElementById("eDate").value, uni: document.getElementById("eUni").value, kind: document.getElementById("eKind").value, text });
-  document.getElementById("eText").value = "";
+  const uni = document.getElementById("eUni").value, course = document.getElementById("eCourse").value.trim(), hint = document.getElementById("eHint");
+  let text = document.getElementById("eText").value.trim();
+  if(course && !uni){ hint.textContent = "Choose the university for this course."; hint.style.color = "var(--deadline)"; document.getElementById("eUni").focus(); return; }
+  if(!text && course) text = "Started my application for " + course + ".";
+  if(!text){ hint.textContent = "Write what happened, or add a course."; hint.style.color = "var(--deadline)"; document.getElementById("eText").focus(); return; }
+  hint.textContent = "Add a course to get a checklist for this application."; hint.style.color = "";
+  const entry = { id: "e" + Date.now().toString(36), date: document.getElementById("eDate").value, uni, kind: document.getElementById("eKind").value, text };
+  if(course){ entry.course = course; entry.deadline = document.getElementById("eDeadline").value; entry.checked = {}; entry.custom = []; }
+  addEntry(entry);
+  document.getElementById("eText").value = ""; document.getElementById("eCourse").value = ""; document.getElementById("eDeadline").value = "";
 });
 
 // ---------- journey road ----------
 const MILESTONES = [
-  ["Research", "Started researching", s => s.entries.length > 0 || s.shortlist.length > 0 || s.apps.length > 0],
+  ["Research", "Started researching", s => s.entries.length > 0 || s.shortlist.length > 0],
   ["Shortlist", "Shortlisted a university", s => s.shortlist.length > 0],
-  ["Applications", "Added an application", s => s.apps.length > 0],
+  ["Applications", "Started an application", s => s.entries.some(e => e.course)],
   ["Documents", "Shared documents half ready", s => CHECK.filter(c => s.checked[c[0]]).length >= Math.ceil(CHECK.length / 2)],
-  ["Statement", "Wrote a personal statement", s => s.apps.some(a => a.checked && a.checked.statement)],
-  ["Applied", "Submitted an application", s => s.apps.some(a => a.checked && a.checked.submitted) || s.entries.some(e => e.kind === "Applied")],
-  ["Decision", "Heard back", s => s.apps.some(a => a.checked && a.checked.decision) || s.entries.some(e => e.kind === "Interview" || e.kind === "Offer" || e.kind === "Rejected")],
-  ["Offer", "Accepted an offer", s => s.apps.some(a => a.checked && a.checked.accepted) || s.entries.some(e => e.kind === "Offer")],
-  ["CAS & visa", "Got your CAS and visa", s => s.apps.some(a => a.checked && a.checked.cas) && !!s.checked.visa]
+  ["Statement", "Wrote a personal statement", s => s.entries.some(a => a.course && a.checked && a.checked.statement)],
+  ["Applied", "Submitted an application", s => s.entries.some(a => a.course && a.checked && a.checked.submitted) || s.entries.some(e => e.kind === "Applied")],
+  ["Decision", "Heard back", s => s.entries.some(a => a.course && a.checked && a.checked.decision) || s.entries.some(e => e.kind === "Interview" || e.kind === "Offer" || e.kind === "Rejected")],
+  ["Offer", "Accepted an offer", s => s.entries.some(a => a.course && a.checked && a.checked.accepted) || s.entries.some(e => e.kind === "Offer")],
+  ["CAS & visa", "Got your CAS and visa", s => s.entries.some(a => a.course && a.checked && a.checked.cas) && !!s.checked.visa]
 ];
 const BEAVER = '<g class="beaver">'
  + '<ellipse cx="60" cy="134" rx="34" ry="6" fill="#2b1d14" opacity=".18"/>'
@@ -968,11 +973,10 @@ function renderJourney(){
 const SB_URL = "https://hlemoqunefivhxzashze.supabase.co";
 const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhsZW1vcXVuZWZpdmh4emFzaHplIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQxODQ2MTQsImV4cCI6MjEwOTc2MDYxNH0.LKCkfrOBNBjq1_ic5swg_wFME-AoPtizs1dduJFwtQU";
 let sb = null, user = null, prefTimer = null, authMode = "signup", sessionSeen = false;
-const blank = () => ({entries:[], shortlist:[], checked:{}, apps:[]});
+const blank = () => ({entries:[], shortlist:[], checked:{}});
 function isGuest(){ return mode === "cloud" && !!sb && !user; }
 const NUDGE = {
   shortlist: "<strong>Added to your shortlist</strong> on this device only. Log in to see your shortlist again on any device.",
-  apps: "<strong>Application added</strong> on this device only. Log in to keep your applications and checklists on any device.",
   diary: "<strong>Entry saved</strong> on this device only. Log in to view your diary again on any device.",
   checklist: "<strong>Ticked</strong> on this device only. Log in to keep your checklist on any device."
 };
@@ -986,32 +990,17 @@ function guestNudge(kind){
 }
 const signedIn = () => mode === "cloud" && sb && user;
 const hereURL = () => location.origin + location.pathname;
-const fromAppRow = r => ({ id: r.id, uni: r.uni, course: r.course, deadline: r.deadline || "", checked: r.checked || {}, custom: r.custom || [], created: r.created_at });
-const appTimers = {};
-function addApp(a){
-  state.apps.push(a); renderAll();
-  if(!signedIn()){ if(mode === "cloud"){ localMsg(); guestNudge("apps"); } else scheduleSave(); return; }
-  setSaveMsg("Saving…");
-  sb.from("applications").insert({ uni: a.uni, course: a.course, deadline: a.deadline || null, checked: a.checked, custom: a.custom }).select().single().then(({data, error}) => {
-    if(error){ state.apps = state.apps.filter(x => x.id !== a.id); renderAll(); document.getElementById("appNote").textContent = "Couldn't save that application: " + error.message; return; }
-    state.apps = state.apps.map(x => x.id === a.id ? fromAppRow(data) : x); renderAll(); setSaveMsg("Saved to your account.");
-  });
-}
-function updateApp(id){
+const entryTimers = {};
+function updateEntry(id){
   if(!signedIn()){ if(mode === "cloud") localMsg(); else scheduleSave(); return; }
-  clearTimeout(appTimers[id]);
-  appTimers[id] = setTimeout(() => {
-    const a = state.apps.find(x => x.id === id); if(!a) return;
-    sb.from("applications").update({ checked: a.checked, custom: a.custom }).eq("id", id).then(({error}) => setSaveMsg(error ? "Couldn't save: " + error.message : "Saved to your account."));
+  clearTimeout(entryTimers[id]);
+  entryTimers[id] = setTimeout(() => {
+    const a = state.entries.find(x => x.id === id); if(!a) return;
+    sb.from("diary_entries").update({ checked: a.checked || {}, custom: a.custom || [] }).eq("id", id).then(({error}) => setSaveMsg(error ? "Couldn't save: " + error.message : "Saved to your account."));
   }, 600);
 }
-function removeApp(id){
-  const before = state.apps;
-  state.apps = state.apps.filter(a => a.id !== id); renderAll();
-  if(!signedIn()){ if(mode === "cloud") localMsg(); else scheduleSave(); return; }
-  sb.from("applications").delete().eq("id", id).then(({error}) => { if(error){ state.apps = before; renderAll(); setSaveMsg("Couldn't delete: " + error.message); } else setSaveMsg("Saved to your account."); });
-}
-const fromRow = r => ({ id: r.id, date: r.entry_date, uni: r.uni || "", kind: r.kind, text: r.body, created: r.created_at });
+const toRow = e => ({ entry_date: e.date, uni: e.uni || "", kind: e.kind, body: e.text, course: e.course || null, deadline: e.deadline || null, checked: e.checked || {}, custom: e.custom || [] });
+const fromRow = r => { const e = { id: r.id, date: r.entry_date, uni: r.uni || "", kind: r.kind, text: r.body, created: r.created_at }; if(r.course){ e.course = r.course; e.deadline = r.deadline || ""; e.checked = r.checked || {}; e.custom = r.custom || []; } return e; };
 
 function readLocal(){ try { const raw = localStorage.getItem(LSKEY); return raw ? JSON.parse(raw) : null; } catch(e){ return null; } }
 function localMsg(){ setSaveMsg(saveLocal() ? "Saved on this device only. Log in to keep your diary on any device." : "Log in to save your entries."); }
@@ -1020,7 +1009,7 @@ function addEntry(e){
   state.entries.push(e); renderAll();
   if(!signedIn()){ if(mode === "cloud"){ localMsg(); guestNudge("diary"); } else scheduleSave(); return; }
   setSaveMsg("Saving…");
-  sb.from("diary_entries").insert({ entry_date: e.date, uni: e.uni, kind: e.kind, body: e.text }).select().single().then(({data, error}) => {
+  sb.from("diary_entries").insert(toRow(e)).select().single().then(({data, error}) => {
     if(error){ state.entries = state.entries.filter(x => x.id !== e.id); renderAll(); setSaveMsg("Couldn't save that entry: " + error.message); return; }
     state.entries = state.entries.map(x => x.id === e.id ? fromRow(data) : x); renderAll(); setSaveMsg("Saved to your account.");
   });
@@ -1043,23 +1032,17 @@ function persistPrefs(kind){
 
 async function loadCloud(){
   setSaveMsg("Loading your journal…");
-  const [er, sr, ar] = await Promise.all([
+  const [er, sr] = await Promise.all([
     sb.from("diary_entries").select("*").order("entry_date", {ascending:false}),
-    sb.from("user_state").select("*").maybeSingle(),
-    sb.from("applications").select("*").order("created_at")
+    sb.from("user_state").select("*").maybeSingle()
   ]);
-  if(er.error || sr.error || ar.error){ setSaveMsg("Couldn't load your journal. Refresh to try again."); return; }
-  const next = { entries: er.data.map(fromRow), shortlist: (sr.data && sr.data.shortlist) || [], checked: (sr.data && sr.data.checked) || {}, apps: ar.data.map(fromAppRow) };
+  if(er.error || sr.error){ setSaveMsg("Couldn't load your journal. Refresh to try again."); return; }
+  const next = { entries: er.data.map(fromRow), shortlist: (sr.data && sr.data.shortlist) || [], checked: (sr.data && sr.data.checked) || {} };
   // Move anything saved in this browser before logging in into the account, once.
-  const loc = readLocal(), moved = loc ? (loc.entries || []).length : 0;
-  const movedApps = loc ? (loc.apps || []).length : 0;
-  if(loc && (moved || movedApps || (loc.shortlist || []).length || Object.keys(loc.checked || {}).length)){
-    if(movedApps){
-      const ins = await sb.from("applications").insert(loc.apps.map(a => ({ uni: a.uni, course: a.course, deadline: a.deadline || null, checked: a.checked || {}, custom: a.custom || [] }))).select();
-      if(!ins.error) next.apps = next.apps.concat(ins.data.map(fromAppRow));
-    }
+  const loc = readLocal() ? normalize(readLocal()) : null, moved = loc ? loc.entries.length : 0;
+  if(loc && (moved || loc.shortlist.length || Object.keys(loc.checked).length)){
     if(moved){
-      const ins = await sb.from("diary_entries").insert(loc.entries.map(e => ({ entry_date: e.date, uni: e.uni || "", kind: e.kind, body: e.text }))).select();
+      const ins = await sb.from("diary_entries").insert(loc.entries.map(toRow)).select();
       if(!ins.error) next.entries = next.entries.concat(ins.data.map(fromRow));
     }
     next.shortlist = Array.from(new Set(next.shortlist.concat(loc.shortlist || [])));
@@ -1076,12 +1059,12 @@ function handleSession(session){
   if(sessionSeen && ((u && user && u.id === user.id) || (!u && !user))) return;
   sessionSeen = true; user = u;
   if(user){ renderAcct(); loadCloud(); }
-  else { state = Object.assign(blank(), readLocal() || {}); renderAll(); renderAcct(); setSaveMsg("Saved on this device only. Log in to keep your diary on any device."); }
+  else { state = normalize(Object.assign(blank(), readLocal() || {})); renderAll(); renderAcct(); setSaveMsg("Saved on this device only. Log in to keep your diary on any device."); }
 }
 
 function startCloud(){
   mode = "cloud";
-  state = Object.assign(blank(), readLocal() || {}); renderAll();
+  state = normalize(Object.assign(blank(), readLocal() || {})); renderAll();
   if(!(window.supabase && window.supabase.createClient)){ mode = "local"; renderAcct(); setSaveMsg("Saved in this browser only."); return; }
   sb = window.supabase.createClient(SB_URL, SB_KEY);
   sb.auth.onAuthStateChange((event, session) => {

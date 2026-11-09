@@ -5,8 +5,7 @@ A one-page website for planning UK taught master's applications for **September 
 - **30 universities** with their deadline system (rounds, course deadlines, rolling or a single final date), key 2027 dates, application fees, deposits and links to each university's full list of taught courses
 - **"What's first up" tabs**: deadlines in the next 60 days, my shortlist, rolling-admission universities and scholarship dates
 - **Deadline timeline** grouped by month, with anything within 30 days in red
-- **Application diary**: dated entries for research, writing, applications, interviews and offers
-- **My applications**: add each university + course; every application gets its own checklist (statement, references, fee, submitted, decision, deposit, CAS) with a progress bar, a days-left countdown and your own extra items
+- **Diary first**: the page opens on your journey. Dated entries for research, writing, applications, interviews and offers. Add a course to an entry and it gets its own checklist (statement, references, fee, submitted, decision, deposit, CAS), progress bar, countdown and your own extra steps
 - **Shared documents** checklist for things you prepare once (transcript, passport, IELTS, CV…)
 - **Journey road** in the diary: nine milestones from research to visa, with the GradJournal beaver standing at the furthest one you've reached
 
@@ -27,9 +26,8 @@ It's a single HTML file with no build step. Open `index.html` in a browser.
 
 Visitors can **sign up with email and password** and log in to see their saved diary, shortlist and checklist on any device. Accounts and data are stored in Supabase (project `gradjournal`):
 
-- `diary_entries`: one row per diary entry
+- `diary_entries`: one row per diary entry; entries with a `course` also store that application's `deadline`, `checked` steps and `custom` steps
 - `user_state`: each user's shortlist and shared-document ticks
-- `applications`: one row per university + course, with its own checklist
 
 Row Level Security is on for every table, so each user can only read and change their own rows. The key in `index.html` is Supabase's public **anon** key, which is safe in browser code because of these policies. The table setup is in `supabase/migrations/`.
 

@@ -10,8 +10,8 @@
 <style>
 /* Layout idea: a one-page product site. Dark hero with a big search bar, sticky mega-nav, full-width bands alternating white / light grey / near-black, ending in a column footer. Single deliberate theme. */
 :root{
-  --black:#111111; --ink:#16181d; --muted:#5b616e; --line:#e3e5ea; --soft:#f4f5f7; --white:#ffffff;
-  --mint:#00d3a9; --mint-dark:#00876c; --deadline:#d6243a; --warn:#a86b00;
+  --black:#2b1d14; --ink:#2b1d14; --muted:#6e5a4b; --line:#e8dccb; --soft:#f6efe4; --white:#fffdf9;
+  --mint:#a8d08d; --mint-dark:#4e7d32; --brown:#b8692e; --deadline:#c2412b; --warn:#a8641f;
   --font:"Lato","Segoe UI",system-ui,sans-serif;
   --mono:"Lato","Segoe UI",system-ui,sans-serif;
   color-scheme: light;
@@ -27,7 +27,7 @@ a{color:inherit}
 .visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 
 /* top bar + nav */
-.topbar{background:var(--black);color:#c9ccd3;font-size:13px}
+.topbar{background:var(--black);color:#e3d3c0;font-size:13px}
 .topbar .wrap{display:flex;justify-content:space-between;gap:12px;padding-top:7px;padding-bottom:7px;flex-wrap:wrap}
 .topbar strong{color:#fff}
 header.nav{position:sticky;top:0;z-index:20;background:var(--white);border-bottom:1px solid var(--line)}
@@ -44,7 +44,8 @@ header.nav .wrap{display:flex;align-items:center;gap:28px;height:64px}
 .acct-btn{white-space:nowrap}
 .who-pill{font-size:14px;font-weight:700;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted)}
 @media (max-width:1240px){.who-pill{display:none}}
-@media (max-width:1100px){.counter{display:none}}
+@media (max-width:1360px){.counter small{display:none}}
+@media (max-width:1180px){.counter{display:none}}
 @media (max-width:860px){.nav-right .write{display:none}}
 dialog.auth{border:0;border-radius:18px;padding:0;width:min(420px,calc(100% - 32px));box-shadow:0 30px 80px rgba(0,0,0,.35)}
 dialog.auth::backdrop{background:rgba(17,17,17,.6)}
@@ -58,7 +59,7 @@ dialog.auth input:focus{outline:none;border-color:var(--black)}
 .auth-switch{font-size:14px;color:var(--muted);margin:0}
 .auth-switch button,.plain{background:none;border:0;padding:0;font:inherit;font-weight:700;text-decoration:underline;cursor:pointer;color:var(--ink)}
 .x{position:absolute;right:14px;top:12px;background:none;border:0;font-size:26px;line-height:1;cursor:pointer;color:var(--muted)}
-.acct-banner{background:#e5faf5;border:1px solid #bfeee2;border-radius:14px;padding:14px 16px;margin-bottom:14px;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;font-size:14.5px}
+.acct-banner{background:#e8f3dd;border:1px solid #cfe5bd;border-radius:14px;padding:14px 16px;margin-bottom:14px;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;font-size:14.5px}
 .acct-banner.in{background:var(--soft);border-color:var(--line)}
 .device-note{font-size:13px;color:var(--muted);margin-top:6px}
 .device-note button,.empty button.plain{font-size:inherit}
@@ -70,7 +71,7 @@ dialog.auth input:focus{outline:none;border-color:var(--black)}
 .toast .tb{display:flex;gap:8px;align-items:center;flex:none}
 .toast .btn.small{border-color:#fff;background:transparent;color:#fff}
 .toast .btn.mint{border-color:var(--mint)}
-.toast .x{position:static;color:#9aa0ab}
+.toast .x{position:static;color:#b49e88}
 @media (max-width:560px){.toast{flex-wrap:wrap}.toast .tb{width:100%}}
 @media (prefers-reduced-motion:no-preference){.toast:not([hidden]){animation:rise .25s ease-out}@keyframes rise{from{transform:translate(-50%,12px);opacity:0}}}
 
@@ -78,31 +79,31 @@ dialog.auth input:focus{outline:none;border-color:var(--black)}
 .btn{font:inherit;font-weight:700;font-size:15px;border-radius:10px;padding:11px 20px;cursor:pointer;border:2px solid var(--ink);background:var(--white);color:var(--ink);text-decoration:none;display:inline-flex;align-items:center;gap:8px;line-height:1.2}
 .btn:hover{background:var(--soft)}
 .btn.primary{background:var(--black);color:#fff;border-color:var(--black)}
-.btn.primary:hover{background:#2a2c31}
+.btn.primary:hover{background:#3d2a1d}
 .btn.mint{background:var(--mint);border-color:var(--mint);color:var(--black)}
-.btn.mint:hover{background:#2be3bd}
+.btn.mint:hover{background:#bddca6}
 .btn.small{font-size:14px;padding:7px 12px;border-width:1.5px;border-radius:8px}
 .btn[aria-pressed="true"]{background:var(--black);color:#fff;border-color:var(--black)}
 .textlink{font-weight:700;text-decoration:underline;text-underline-offset:3px}
 
 /* hero */
 .hero{background:var(--black);color:#fff;padding:72px 0 64px;position:relative;overflow:hidden}
-.hero::after{content:"";position:absolute;right:-120px;top:-120px;width:520px;height:520px;border-radius:50%;background:radial-gradient(circle,rgba(0,211,169,.28),rgba(0,211,169,0) 65%);pointer-events:none}
+.hero::after{content:"";position:absolute;right:-120px;top:-120px;width:520px;height:520px;border-radius:50%;background:radial-gradient(circle,rgba(168,208,141,.30),rgba(168,208,141,0) 65%);pointer-events:none}
 .hero .wrap{position:relative;z-index:1;display:grid;grid-template-columns:1.25fr .75fr;gap:48px;align-items:center}
 @media (max-width:900px){.hero .wrap{grid-template-columns:1fr}}
 .kicker{display:inline-block;font-size:13px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--mint)}
 .hero h1{font-size:clamp(36px,5.6vw,64px);line-height:1.02;letter-spacing:-.03em;margin:12px 0 16px;font-weight:900;text-wrap:balance}
-.hero p.sub{font-size:19px;color:#c9ccd3;max-width:58ch;margin:0 0 26px}
+.hero p.sub{font-size:19px;color:#e3d3c0;max-width:58ch;margin:0 0 26px}
 .search{display:flex;background:#fff;border-radius:12px;padding:6px;gap:6px;max-width:640px}
 .search input{flex:1;border:0;font:inherit;font-size:17px;padding:12px 14px;border-radius:8px;color:var(--ink);min-width:0}
 .search input:focus{outline:none}
 .search:focus-within{box-shadow:0 0 0 3px var(--mint)}
-.fine{font-size:13px;color:#9aa0ab;margin-top:12px}
-.trust{background:#1c1d21;border:1px solid #2c2e34;border-radius:16px;padding:22px}
+.fine{font-size:13px;color:#b49e88;margin-top:12px}
+.trust{background:#3a291d;border:1px solid #4a3627;border-radius:16px;padding:22px}
 .trust .big{font-size:44px;font-weight:900;letter-spacing:-.02em;line-height:1;font-variant-numeric:tabular-nums}
-.trust .lbl{color:#c9ccd3;font-size:14px;margin:6px 0 14px}
+.trust .lbl{color:#e3d3c0;font-size:14px;margin:6px 0 14px}
 .trust .who{font-weight:700}
-.trust .row{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-top:1px solid #2c2e34;font-size:14px}
+.trust .row{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-top:1px solid #4a3627;font-size:14px}
 .trust .row > span:last-child{font-family:var(--mono);color:var(--mint);white-space:nowrap}
 
 /* sections */
@@ -112,7 +113,7 @@ section.band.dark{background:var(--black);color:#fff}
 .sec-head{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:26px}
 h2{font-size:clamp(28px,3.4vw,40px);line-height:1.1;letter-spacing:-.02em;margin:0;font-weight:900;text-wrap:balance}
 .sec-head p{margin:8px 0 0;color:var(--muted);max-width:62ch}
-.dark .sec-head p{color:#c9ccd3}
+.dark .sec-head p{color:#e3d3c0}
 h3{font-size:19px;line-height:1.25;margin:0;font-weight:900;text-wrap:balance}
 
 /* tabs */
@@ -121,9 +122,9 @@ h3{font-size:19px;line-height:1.25;margin:0;font-weight:900;text-wrap:balance}
 .tabbar button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--mint-dark)}
 .tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}
 .tile{background:var(--white);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:8px;min-height:170px}
-.badge{align-self:flex-start;font-size:12px;font-weight:900;letter-spacing:.02em;padding:3px 9px;border-radius:6px;background:#e5faf5;color:var(--mint-dark)}
-.badge.red{background:#fde8eb;color:var(--deadline)}
-.badge.amber{background:#fff3dc;color:var(--warn)}
+.badge{align-self:flex-start;font-size:12px;font-weight:900;letter-spacing:.02em;padding:3px 9px;border-radius:6px;background:#e8f3dd;color:var(--mint-dark)}
+.badge.red{background:#f9e3dc;color:var(--deadline)}
+.badge.amber{background:#f8ead6;color:var(--warn)}
 .badge.dark{background:var(--black);color:#fff}
 .tile .when{font-family:var(--mono);font-size:22px;font-weight:900;letter-spacing:-.02em}
 .tile p{margin:0;color:var(--muted);font-size:14.5px}
@@ -132,10 +133,10 @@ h3{font-size:19px;line-height:1.25;margin:0;font-weight:900;text-wrap:balance}
 /* steps */
 .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;counter-reset:s}
 @media (max-width:860px){.steps{grid-template-columns:1fr}}
-.step{background:#1c1d21;border:1px solid #2c2e34;border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:12px}
+.step{background:#3a291d;border:1px solid #4a3627;border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:12px}
 .step .num{font-family:var(--mono);color:var(--mint);font-size:14px}
-.step p{margin:0;color:#c9ccd3}
-.step .vis{height:120px;border-radius:10px;background:#26282e;display:grid;place-items:center;padding:14px}
+.step p{margin:0;color:#e3d3c0}
+.step .vis{height:120px;border-radius:10px;background:#3a291d;display:grid;place-items:center;padding:14px}
 .step .vis svg{width:100%;height:100%}
 
 /* university cards */
@@ -152,7 +153,7 @@ h3{font-size:19px;line-height:1.25;margin:0;font-weight:900;text-wrap:balance}
 .dates{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:5px}
 .dates li{display:grid;grid-template-columns:98px 1fr;gap:10px;font-size:14px}
 .dates .d{font-family:var(--mono);font-size:12.5px;padding-top:2px}
-.dates li.past{color:#9aa0ab} .dates li.past .d{text-decoration:line-through}
+.dates li.past{color:#b49e88} .dates li.past .d{text-decoration:line-through}
 .dates li.next .d{color:var(--deadline);font-weight:700}
 .facts{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;font-size:14px;margin:0;padding-top:10px;border-top:1px solid var(--line)}
 .facts dt{color:var(--muted)} .facts dd{margin:0}
@@ -165,7 +166,7 @@ h3{font-size:19px;line-height:1.25;margin:0;font-weight:900;text-wrap:balance}
 @media (max-width:860px){.statgrid{grid-template-columns:repeat(2,1fr)}}
 .statgrid .n{font-size:clamp(34px,4vw,52px);font-weight:900;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}
 .statgrid .n em{font-style:normal;color:var(--mint)}
-.statgrid p{margin:8px 0 0;color:#c9ccd3;font-size:15px}
+.statgrid p{margin:8px 0 0;color:#e3d3c0;font-size:15px}
 
 /* timeline */
 .tl-wrap{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:18px}
@@ -176,18 +177,28 @@ h3{font-size:19px;line-height:1.25;margin:0;font-weight:900;text-wrap:balance}
 .tl li:first-child{border-top:0}
 .tl .d{font-family:var(--mono);font-size:13px}
 .tl li.soon .d{color:var(--deadline);font-weight:700}
-.tl li.past{color:#9aa0ab}
+.tl li.past{color:#b49e88}
 .tl .u{font-weight:700;display:block}
 
 /* diary */
+.journey{background:var(--soft);border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:28px}
+.journey-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:12px}
+.journey-head h3{font-size:22px}
+.journey-head .note{margin-top:4px;font-size:15px}
+.journey-count{font-weight:900;color:var(--mint-dark);white-space:nowrap}
+.road-scroll{overflow-x:auto;border-radius:18px}
+.road{display:block;width:100%;min-width:760px;height:auto}
+.stop-label{font-family:var(--font);font-size:14px;font-weight:900;fill:#2b1d14;paint-order:stroke;stroke:#a8d08d;stroke-width:5px}
+.stop:not(.done) .stop-label{fill:#4a3627}
+@media (prefers-reduced-motion:no-preference){.beaver{animation:bob 2.4s ease-in-out infinite;transform-box:fill-box;transform-origin:bottom}@keyframes bob{50%{transform:translateY(-4px)}}}
 .diary{display:grid;grid-template-columns:minmax(280px,380px) 1fr;gap:28px;align-items:start}
 @media (max-width:860px){.diary{grid-template-columns:1fr}}
 form.entry{background:var(--black);color:#fff;border-radius:16px;padding:22px;display:flex;flex-direction:column;gap:12px;position:sticky;top:84px}
 form.entry h3{color:#fff}
-form.entry label{font-size:13px;font-weight:700;color:#c9ccd3;display:flex;flex-direction:column;gap:5px}
+form.entry label{font-size:13px;font-weight:700;color:#e3d3c0;display:flex;flex-direction:column;gap:5px}
 form.entry input,form.entry select,form.entry textarea{font:inherit;color:var(--ink);background:#fff;border:0;border-radius:8px;padding:10px 12px}
 textarea{min-height:120px;resize:vertical}
-.savebar{font-size:13px;color:#9aa0ab}
+.savebar{font-size:13px;color:#b49e88}
 .entries{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px}
 .entries li{background:var(--white);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
 .entries .meta{display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:13.5px;color:var(--muted)}
@@ -203,10 +214,33 @@ textarea{min-height:120px;resize:vertical}
 .check input{margin-top:3px;width:20px;height:20px;accent-color:var(--mint-dark);flex:none}
 .check label{cursor:pointer;font-weight:700}
 .check .why{display:block;font-weight:400;font-size:14px;color:var(--muted)}
-.check li.done{background:#effcf8;border-color:#bfeee2}
+.check li.done{background:#f1f8ea;border-color:#cfe5bd}
 .check li.done label>span:first-child{text-decoration:line-through}
 .progress{height:10px;border-radius:999px;background:var(--line);overflow:hidden;min-width:220px}
 .progress div{height:100%;background:var(--mint-dark)}
+.appform{display:grid;grid-template-columns:minmax(200px,1.2fr) minmax(200px,1.4fr) 170px auto;gap:10px;align-items:end;background:var(--white);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:8px}
+@media (max-width:860px){.appform{grid-template-columns:1fr}}
+.appform label{font-size:13px;font-weight:700;color:var(--muted);display:flex;flex-direction:column;gap:5px}
+.appform input,.appform select{font:inherit;border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;background:#fff;color:var(--ink)}
+.apps{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:18px;margin:18px 0 40px}
+@media (max-width:420px){.apps{grid-template-columns:1fr}}
+.app{background:var(--white);border:1px solid var(--line);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:12px}
+.app.complete{border-color:var(--mint-dark)}
+.app .uni{font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.app .dl{font-size:14px;color:var(--muted)} .app .dl strong{color:var(--deadline)}
+.app .prog{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:700}
+.app .prog .progress{flex:1;min-width:0;height:8px}
+.check.mini{grid-template-columns:1fr;gap:6px}
+.check.mini li{padding:8px 10px;border-radius:10px;align-items:center}
+.check.mini label{font-weight:400;font-size:14.5px}
+.check.mini input{margin-top:0}
+.check.mini .rm{margin-left:auto;background:none;border:0;color:var(--muted);cursor:pointer;font-size:18px;line-height:1}
+.additem{display:flex;gap:8px}
+.additem input{flex:1;min-width:0;font:inherit;font-size:14px;border:1.5px solid var(--line);border-radius:8px;padding:7px 10px}
+.app-foot{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
+.danger{color:var(--deadline)!important}
+.subhead{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:16px}
+.subhead h3{font-size:24px}
 
 /* cta band + faq */
 .cta{background:var(--mint);color:var(--black);padding:44px 0}
@@ -222,13 +256,13 @@ textarea{min-height:120px;resize:vertical}
 .faq p{margin:10px 0 0;color:var(--muted);max-width:70ch}
 
 /* footer */
-footer{background:var(--black);color:#c9ccd3;padding:56px 0 30px;font-size:14px}
+footer{background:var(--black);color:#e3d3c0;padding:56px 0 30px;font-size:14px}
 .fcols{display:grid;grid-template-columns:1.4fr repeat(3,1fr);gap:28px}
 @media (max-width:760px){.fcols{grid-template-columns:1fr 1fr}}
 footer h4{color:#fff;font-size:15px;margin:0 0 12px}
 footer ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
 footer a{text-decoration:none} footer a:hover{text-decoration:underline;color:#fff}
-.legal{border-top:1px solid #2c2e34;margin-top:36px;padding-top:18px;color:#9aa0ab;font-size:13px}
+.legal{border-top:1px solid #4a3627;margin-top:36px;padding-top:18px;color:#b49e88;font-size:13px}
 </style>
 </head>
 <body>
@@ -236,13 +270,13 @@ footer a{text-decoration:none} footer a:hover{text-decoration:underline;color:#f
 
 <header class="nav">
   <div class="wrap">
-    <a class="brand" href="#top"><span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#00d3a9" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2 9 2 12 0v-5"/></svg></span><span>Grad<span class="bj">Journal</span></span></a>
+    <a class="brand" href="#top"><span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#a8d08d" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2 9 2 12 0v-5"/></svg></span><span>Grad<span class="bj">Journal</span></span></a>
     <nav class="menu" aria-label="Main">
       <a href="#first-up">First up</a>
       <a href="#universities">Universities</a>
       <a href="#timeline">Timeline</a>
       <a href="#diary">My diary</a>
-      <a href="#checklist">Documents</a>
+      <a href="#checklist">Applications</a>
       <a href="#faq">FAQ</a>
     </nav>
     <div class="nav-right">
@@ -291,9 +325,9 @@ footer a{text-decoration:none} footer a:hover{text-decoration:underline;color:#f
   <div class="wrap">
     <div class="sec-head"><div><h2>Three steps from shortlist to offer</h2><p>How to use this site through the 2026–27 application cycle.</p></div></div>
     <div class="steps">
-      <div class="step"><div class="vis" aria-hidden="true"><svg viewBox="0 0 200 90"><rect x="8" y="10" width="56" height="70" rx="8" fill="#33363d"/><rect x="72" y="10" width="56" height="70" rx="8" fill="#00d3a9"/><rect x="136" y="10" width="56" height="70" rx="8" fill="#33363d"/><path d="M90 45l7 7 14-15" stroke="#111" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="num">01</span><h3>Build a shortlist</h3><p>Star universities on their cards. The shortlist tab and timeline then show only your picks.</p><a class="textlink" href="#universities">Browse universities</a></div>
-      <div class="step"><div class="vis" aria-hidden="true"><svg viewBox="0 0 200 90"><line x1="10" y1="45" x2="190" y2="45" stroke="#33363d" stroke-width="4"/><circle cx="40" cy="45" r="9" fill="#5b616e"/><circle cx="100" cy="45" r="12" fill="#00d3a9"/><circle cx="160" cy="45" r="9" fill="#33363d" stroke="#5b616e" stroke-width="3"/></svg></div><span class="num">02</span><h3>Beat the deadlines</h3><p>Rounds, funding deadlines and final dates in one timeline, with anything within 30 days in red.</p><a class="textlink" href="#timeline">See the timeline</a></div>
-      <div class="step"><div class="vis" aria-hidden="true"><svg viewBox="0 0 200 90"><rect x="40" y="8" width="120" height="74" rx="8" fill="#33363d"/><rect x="54" y="22" width="70" height="7" rx="3" fill="#00d3a9"/><rect x="54" y="38" width="92" height="6" rx="3" fill="#5b616e"/><rect x="54" y="52" width="80" height="6" rx="3" fill="#5b616e"/><rect x="54" y="66" width="56" height="6" rx="3" fill="#5b616e"/></svg></div><span class="num">03</span><h3>Log every step</h3><p>Write dated diary entries for drafts, submissions, interviews and offers. They're saved on this page.</p><a class="textlink" href="#diary">Open my diary</a></div>
+      <div class="step"><div class="vis" aria-hidden="true"><svg viewBox="0 0 200 90"><rect x="8" y="10" width="56" height="70" rx="8" fill="#4a3627"/><rect x="72" y="10" width="56" height="70" rx="8" fill="#a8d08d"/><rect x="136" y="10" width="56" height="70" rx="8" fill="#4a3627"/><path d="M90 45l7 7 14-15" stroke="#111" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="num">01</span><h3>Build a shortlist</h3><p>Star universities on their cards. The shortlist tab and timeline then show only your picks.</p><a class="textlink" href="#universities">Browse universities</a></div>
+      <div class="step"><div class="vis" aria-hidden="true"><svg viewBox="0 0 200 90"><line x1="10" y1="45" x2="190" y2="45" stroke="#4a3627" stroke-width="4"/><circle cx="40" cy="45" r="9" fill="#8a6a50"/><circle cx="100" cy="45" r="12" fill="#a8d08d"/><circle cx="160" cy="45" r="9" fill="#4a3627" stroke="#8a6a50" stroke-width="3"/></svg></div><span class="num">02</span><h3>Beat the deadlines</h3><p>Rounds, funding deadlines and final dates in one timeline, with anything within 30 days in red.</p><a class="textlink" href="#timeline">See the timeline</a></div>
+      <div class="step"><div class="vis" aria-hidden="true"><svg viewBox="0 0 200 90"><rect x="40" y="8" width="120" height="74" rx="8" fill="#4a3627"/><rect x="54" y="22" width="70" height="7" rx="3" fill="#a8d08d"/><rect x="54" y="38" width="92" height="6" rx="3" fill="#8a6a50"/><rect x="54" y="52" width="80" height="6" rx="3" fill="#8a6a50"/><rect x="54" y="66" width="56" height="6" rx="3" fill="#8a6a50"/></svg></div><span class="num">03</span><h3>Log every step</h3><p>Write dated diary entries for drafts, submissions, interviews and offers. They're saved on this page.</p><a class="textlink" href="#diary">Open my diary</a></div>
     </div>
   </div>
 </section>
@@ -328,6 +362,7 @@ footer a{text-decoration:none} footer a:hover{text-decoration:underline;color:#f
 <section class="band" id="diary">
   <div class="wrap">
     <div class="sec-head"><div><h2>My application diary</h2><p>A dated log of the journey: research, statements, submissions, interviews and offers.</p></div></div>
+    <div class="journey" id="journey"></div>
     <div class="diary">
       <form class="entry" id="entryForm">
         <h3>New entry</h3>
@@ -354,7 +389,17 @@ footer a{text-decoration:none} footer a:hover{text-decoration:underline;color:#f
 
 <section class="band grey" id="checklist">
   <div class="wrap">
-    <div class="sec-head"><div><h2>Documents checklist</h2><p>What most UK taught master's applications ask for. Tick items off as they're ready.</p></div>
+    <div class="sec-head"><div><h2>My applications</h2><p>Add each university and course you're applying to. Each one gets its own checklist, and anything with a deadline appears in the timeline.</p></div></div>
+    <form class="appform" id="appForm" novalidate>
+      <label for="aUni">University<select id="aUni" required></select></label>
+      <label for="aCourse">Course<input type="text" id="aCourse" maxlength="200" placeholder="e.g. MSc Data Science" required></label>
+      <label for="aDeadline">Deadline (optional)<input type="date" id="aDeadline"></label>
+      <button class="btn primary" type="submit">Add application</button>
+    </form>
+    <div class="device-note" id="appNote" aria-live="polite"></div>
+    <div class="apps" id="appList"></div>
+
+    <div class="subhead"><div><h3>Shared documents</h3><p class="note" style="margin-top:6px">Things you prepare once and reuse for every application.</p></div>
       <div><div id="checkCount" style="font-weight:700;margin-bottom:6px"></div><div class="progress"><div id="checkBar" style="width:0"></div></div><div class="device-note" id="checkNote"></div></div></div>
     <ul class="check" id="checkList"></ul>
   </div>
@@ -383,9 +428,9 @@ footer a{text-decoration:none} footer a:hover{text-decoration:underline;color:#f
 <footer>
   <div class="wrap">
     <div class="fcols">
-      <div><a class="brand" href="#top" style="color:#fff"><span class="mark" aria-hidden="true" style="background:#26282e"><svg viewBox="0 0 24 24" fill="none" stroke="#00d3a9" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2 9 2 12 0v-5"/></svg></span><span>Grad<span class="bj">Journal</span></span></a><p style="max-width:34ch">A personal planner for UK taught master's applications, September 2027 entry.</p></div>
+      <div><a class="brand" href="#top" style="color:#fff"><span class="mark" aria-hidden="true" style="background:#3a291d"><svg viewBox="0 0 24 24" fill="none" stroke="#a8d08d" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2 9 2 12 0v-5"/></svg></span><span>Grad<span class="bj">Journal</span></span></a><p style="max-width:34ch">A personal planner for UK taught master's applications, September 2027 entry.</p></div>
       <div><h4>Plan</h4><ul><li><a href="#first-up">First up</a></li><li><a href="#universities">Universities</a></li><li><a href="#timeline">Timeline</a></li></ul></div>
-      <div><h4>Track</h4><ul><li><a href="#diary">My diary</a></li><li><a href="#checklist">Documents</a></li></ul></div>
+      <div><h4>Track</h4><ul><li><a href="#diary">My diary</a></li><li><a href="#checklist">Applications</a></li></ul></div>
       <div><h4>Help</h4><ul><li><a href="#faq">FAQ</a></li><li><a href="https://www.gov.uk/student-visa" target="_blank" rel="noopener">UK Student visa (GOV.UK) ↗</a></li></ul></div>
     </div>
     <div class="legal">University facts come from each university's admissions pages where available, and from application-guide sites (marked "guide site") where not. Deadlines change; confirm on the official course page before applying.</div>
@@ -580,21 +625,26 @@ const SYS = {rounds:"Rounds",fixed:"Course deadlines",rolling:"Rolling",final:"S
 const CHECK = [
  ["transcript","Degree transcript","Official marks from your university, translated into English if needed."],
  ["certificate","Degree certificate","Or a letter confirming your expected graduation date."],
- ["statement","Personal statement","Often course-specific; some universities (e.g. Imperial Business School) ask essay questions instead."],
- ["ref1","Academic reference 1","Ask early. LSE won't process an application until every referee replies."],
- ["ref2","Second reference","Many courses need two; Warwick and Lancaster usually ask for one."],
- ["cv","CV","Required for business and professional courses; often optional elsewhere."],
- ["english","English test (IELTS, TOEFL or PTE)","Typical level IELTS 6.5 overall; higher for some courses. Can often be sent after applying."],
  ["passport","Passport copy","Needed for international applicants."],
- ["sample","Writing sample or portfolio","Only some courses (e.g. Cambridge MPhil Public Policy asks for 1,000 words)."],
- ["tests","GRE or GMAT","Only some courses, e.g. Oxford MSc Economics for Development."],
- ["fees","Application fees budget","£0–£75 each; Birmingham, Cardiff and Newcastle charge none."],
- ["funding","Scholarship applications","Often due before the course deadline (Cambridge funding: 8 Dec 2026)."],
- ["deposit","Tuition deposit","Usually £2,000–£4,500 for international offer-holders."],
+ ["english","English test (IELTS, TOEFL or PTE)","Typical level IELTS 6.5 overall; higher for some courses. Can often be sent after applying."],
+ ["cv","CV","Required for business and professional courses; often optional elsewhere."],
+ ["referees","Referees agreed to write for you","Ask early and give them your deadlines. Most courses want one or two academic references."],
+ ["tests","GRE or GMAT (if any course needs it)","Only some courses, e.g. Oxford MSc Economics for Development."],
  ["atas","ATAS certificate (if needed)","Some science and engineering subjects; apply only after you get an offer."],
- ["cas","CAS from your chosen university","Issued after you accept and pay the deposit; you need it for the visa."],
- ["visa","Student visa application","Leave enough time: universities ask visa applicants to apply earlier."]
+ ["visa","Student visa application","After you have your CAS. Universities ask visa applicants to apply earlier."]
 ];
+const APP_STEPS = [
+ ["statement","Personal statement written for this course"],
+ ["refs","References requested in the application portal"],
+ ["extras","Extra documents this course asks for (writing sample, portfolio, essays)"],
+ ["fee","Application fee paid (if any)"],
+ ["submitted","Application submitted"],
+ ["funding","Scholarship or funding form sent"],
+ ["decision","Decision received"],
+ ["accepted","Offer accepted and deposit paid"],
+ ["cas","CAS received"]
+];
+
 
 
 
@@ -603,7 +653,7 @@ const SCHOLAR = /scholarship|funding|financial support/i;
 // ---------- state ----------
 let state;
 try { state = JSON.parse(document.getElementById("state").textContent); } catch(e){ state = {entries:[],shortlist:[],checked:{}}; }
-state.entries = state.entries || []; state.shortlist = state.shortlist || []; state.checked = state.checked || {};
+state.entries = state.entries || []; state.shortlist = state.shortlist || []; state.checked = state.checked || {}; state.apps = state.apps || [];
 let artifactApi = null, mode = "pending", saveTimer = null;
 const LSKEY = "uk-masters-journal-v1";
 function setSaveMsg(t){ const el = document.getElementById("saveState"); if(el) el.textContent = t; }
@@ -699,7 +749,7 @@ function renderUnis(){
     const n = state.entries.filter(e => e.uni === u.id).length;
     return '<article class="card'+(isStar(u.id)?" star":"")+'" id="u-'+u.id+'"><div class="card-head"><div><h3>'+esc(u.name)+'</h3><div class="city">'+esc(u.city)+'</div></div><span class="badge '+sysBadge(u.sys)+'">'+SYS[u.sys]+'</span></div>'
       + dates + facts + (u.note ? '<p class="note">'+esc(u.note)+'</p>' : "")
-      + '<div class="actions"><button type="button" class="btn small" data-star="'+u.id+'" aria-pressed="'+isStar(u.id)+'">'+(isStar(u.id)?"★ Shortlisted":"☆ Add to shortlist")+'</button><button type="button" class="btn small" data-note="'+u.id+'">Diary note'+(n?" ("+n+")":"")+'</button>'+links+'</div></article>';
+      + '<div class="actions"><button type="button" class="btn small" data-star="'+u.id+'" aria-pressed="'+isStar(u.id)+'">'+(isStar(u.id)?"★ Shortlisted":"☆ Add to shortlist")+'</button><button type="button" class="btn small" data-note="'+u.id+'">Diary note'+(n?" ("+n+")":"")+'</button><button type="button" class="btn small" data-addapp="'+u.id+'">+ Application</button>'+links+'</div></article>';
   }).join("");
 }
 
@@ -707,19 +757,20 @@ function renderUnis(){
 function renderNumbers(){
   const ds = allDates().filter(x => days(x.d) >= 0);
   const rounds = UNIS.filter(u => u.sys === "rounds").length, rolling = UNIS.filter(u => u.sys === "rolling").length;
-  const applied = state.entries.filter(e => e.kind === "Applied").length;
+  const applied = state.apps.filter(a => a.checked && a.checked.submitted).length || state.entries.filter(e => e.kind === "Applied").length;
   document.getElementById("statgrid").innerHTML = [
     [UNIS.length, "universities covered"],
     [ds.length, "upcoming dated deadlines"],
     [rounds + rolling, "use rounds or rolling admissions, so earlier is better"],
-    [applied, applied === 1 ? "application sent (from your diary)" : "applications sent (from your diary)"]
+    [applied, applied === 1 ? "application submitted so far" : "applications submitted so far"]
   ].map(([n,t]) => '<div><div class="n">'+n+'<em>.</em></div><p>'+t+'</p></div>').join("");
 }
 
 // ---------- timeline ----------
 let tlStar = false, tlPast = false;
 function renderTimeline(){
-  const list = allDates().filter(x => (tlPast || days(x.d) >= 0) && (!tlStar || isStar(x.u.id)));
+  const mine = (state.apps || []).filter(a => a.deadline).map(a => ({ d: a.deadline, l: "My application deadline: " + a.course, u: UNIS.find(x => x.id === a.uni) || {id:"", name:"My application"} }));
+  const list = allDates().concat(mine).sort((x,y) => parse(x.d) - parse(y.d)).filter(x => (tlPast || days(x.d) >= 0) && (!tlStar || isStar(x.u.id)));
   const box = document.getElementById("tlList");
   if(!list.length){ box.innerHTML = '<div class="empty">Nothing to show. '+(tlStar?"Star some universities, or turn off “Shortlist only”.":"")+'</div>'; return; }
   const groups = {};
@@ -756,7 +807,31 @@ function renderChecklist(){
   document.getElementById("checkList").innerHTML = CHECK.map(([k,t,w]) => '<li class="'+(state.checked[k]?"done":"")+'"><input type="checkbox" id="c-'+k+'" data-check="'+k+'" '+(state.checked[k]?"checked":"")+'><label for="c-'+k+'"><span>'+esc(t)+'</span><span class="why">'+esc(w)+'</span></label></li>').join("");
 }
 
-function renderAll(){ renderHero(); renderTiles(); renderSysFilter(); renderUnis(); renderNumbers(); renderTimeline(); renderEntries(); renderChecklist(); }
+let pendingDel = null;
+function appItems(a){ return APP_STEPS.map(([k,t]) => ({k, t, custom:false})).concat((a.custom || []).map(c => ({k: "c:" + c.id, t: c.text, custom:true, cid: c.id}))); }
+function renderApps(){
+  const sel = document.getElementById("aUni"), cur = sel.value;
+  if(!sel.options.length) sel.innerHTML = '<option value="">Choose a university</option>' + UNIS.map(u => '<option value="'+u.id+'">'+esc(u.name)+'</option>').join("");
+  sel.value = cur;
+  document.getElementById("appNote").innerHTML = isGuest() && state.apps.length ? 'Saved on this device only. <button type="button" class="plain" data-auth="login">Log in</button> to keep your applications on any device.' : "";
+  const box = document.getElementById("appList");
+  if(!state.apps.length){ box.innerHTML = '<div class="empty">'+(isGuest() ? '<button type="button" class="plain" data-auth="login">Log in</button> to see your saved applications, or add your first one above.' : 'No applications yet. Add a university and course above, or use \u201c+ Application\u201d on any university card.')+'</div>'; return; }
+  const list = state.apps.slice().sort((a,b) => (a.deadline || "9999").localeCompare(b.deadline || "9999") || String(a.created || a.id).localeCompare(String(b.created || b.id)));
+  box.innerHTML = list.map(a => {
+    const items = appItems(a), done = items.filter(i => a.checked && a.checked[i.k]).length, pct = Math.round(done / items.length * 100);
+    const dd = a.deadline ? days(a.deadline) : null;
+    const dl = a.deadline ? 'Deadline <strong>'+fmt(a.deadline)+'</strong>'+(dd >= 0 ? ' · '+dd+(dd === 1 ? " day" : " days")+' left' : ' · passed') : 'No deadline set';
+    const lis = items.map(i => { const id = "ac-" + a.id + "-" + i.k.replace(/[^a-z0-9]/gi,"_"); const on = a.checked && a.checked[i.k];
+      return '<li class="'+(on?"done":"")+'"><input type="checkbox" id="'+id+'" data-acheck="'+esc(a.id)+'" data-key="'+esc(i.k)+'" '+(on?"checked":"")+'><label for="'+id+'"><span>'+esc(i.t)+'</span></label>'+(i.custom?'<button type="button" class="rm" data-arm="'+esc(a.id)+'" data-cid="'+esc(i.cid)+'" aria-label="Remove item">×</button>':"")+'</li>'; }).join("");
+    const del = pendingDel === a.id ? '<span>Delete this application? <button type="button" class="plain danger" data-adel="'+esc(a.id)+'" data-confirm="1">Yes, delete</button> · <button type="button" class="plain" data-adel="'+esc(a.id)+'" data-confirm="0">Cancel</button></span>' : '<button type="button" class="plain" data-adel="'+esc(a.id)+'">Delete application</button>';
+    return '<article class="app'+(done === items.length ? " complete" : "")+'" id="a-'+esc(a.id)+'"><div><div class="uni">'+esc(short(uniName(a.uni)))+'</div><h3>'+esc(a.course)+'</h3><div class="dl">'+dl+'</div></div>'
+      + '<div class="prog"><span>'+done+' of '+items.length+'</span><div class="progress"><div style="width:'+pct+'%"></div></div></div>'
+      + '<ul class="check mini">'+lis+'</ul>'
+      + '<form class="additem" data-aadd="'+esc(a.id)+'"><label class="visually-hidden" for="ai-'+esc(a.id)+'">Add your own item</label><input id="ai-'+esc(a.id)+'" maxlength="140" placeholder="Add your own item, e.g. Portfolio link"><button class="btn small" type="submit">Add</button></form>'
+      + '<div class="app-foot">'+del+'</div></article>';
+  }).join("");
+}
+function renderAll(){ renderHero(); renderTiles(); renderSysFilter(); renderUnis(); renderNumbers(); renderTimeline(); renderEntries(); renderApps(); renderChecklist(); renderJourney(); }
 
 // ---------- events ----------
 function jumpTo(id){
@@ -765,8 +840,11 @@ function jumpTo(id){
   const el = document.getElementById("u-" + id); if(el){ el.scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block:"center"}); }
 }
 document.addEventListener("click", function(ev){
-  const t = ev.target.closest("[data-star],[data-note],[data-sys],[data-del],[data-tab],[data-jump],#starOnly,#tlStar,#tlPast");
+  const t = ev.target.closest("[data-star],[data-note],[data-sys],[data-del],[data-tab],[data-jump],[data-addapp],[data-adel],[data-arm],#starOnly,#tlStar,#tlPast");
   if(!t) return;
+  if(t.dataset.addapp){ document.getElementById("aUni").value = t.dataset.addapp; document.getElementById("checklist").scrollIntoView(); setTimeout(() => document.getElementById("aCourse").focus({preventScroll:true}), 60); return; }
+  if(t.dataset.adel){ if(t.dataset.confirm === "1"){ pendingDel = null; removeApp(t.dataset.adel); } else { pendingDel = t.dataset.confirm === "0" ? null : t.dataset.adel; renderApps(); } return; }
+  if(t.dataset.arm){ const a = state.apps.find(x => x.id === t.dataset.arm); if(a){ a.custom = (a.custom || []).filter(c => c.id !== t.dataset.cid); delete a.checked["c:" + t.dataset.cid]; renderApps(); updateApp(a.id); } return; }
   if(t.dataset.star){ toggleStar(t.dataset.star); }
   else if(t.dataset.jump){ ev.preventDefault(); jumpTo(t.dataset.jump); }
   else if(t.dataset.tab){ tab = t.dataset.tab; renderTiles(); }
@@ -779,8 +857,32 @@ document.addEventListener("click", function(ev){
 });
 document.addEventListener("change", function(ev){
   const k = ev.target.dataset && ev.target.dataset.check;
-  if(k){ if(ev.target.checked) state.checked[k] = true; else delete state.checked[k]; renderChecklist(); renderHero(); persistPrefs(ev.target.checked ? "checklist" : ""); }
+  if(k){ if(ev.target.checked) state.checked[k] = true; else delete state.checked[k]; renderChecklist(); renderHero(); renderJourney(); persistPrefs(ev.target.checked ? "checklist" : ""); }
   if(ev.target.id === "dFilter") renderEntries();
+  if(ev.target.dataset && ev.target.dataset.acheck){
+    const a = state.apps.find(x => x.id === ev.target.dataset.acheck); if(!a) return;
+    a.checked = a.checked || {};
+    if(ev.target.checked) a.checked[ev.target.dataset.key] = true; else delete a.checked[ev.target.dataset.key];
+    renderApps(); renderNumbers(); renderJourney(); updateApp(a.id);
+  }
+});
+document.getElementById("appForm").addEventListener("submit", function(ev){
+  ev.preventDefault();
+  const uni = document.getElementById("aUni").value, course = document.getElementById("aCourse").value.trim(), deadline = document.getElementById("aDeadline").value;
+  const note = document.getElementById("appNote");
+  if(!uni){ note.textContent = "Choose a university first."; document.getElementById("aUni").focus(); return; }
+  if(!course){ note.textContent = "Type the course name, e.g. MSc Data Science."; document.getElementById("aCourse").focus(); return; }
+  addApp({ id: "a" + Date.now().toString(36), uni, course, deadline, checked: {}, custom: [] });
+  document.getElementById("aCourse").value = ""; document.getElementById("aDeadline").value = "";
+});
+document.addEventListener("submit", function(ev){
+  const f = ev.target.closest("form[data-aadd]"); if(!f) return;
+  ev.preventDefault();
+  const a = state.apps.find(x => x.id === f.dataset.aadd), inp = f.querySelector("input"), text = inp.value.trim();
+  if(!a || !text) return;
+  a.custom = (a.custom || []).concat({ id: Date.now().toString(36), text });
+  renderApps(); updateApp(a.id);
+  setTimeout(() => { const el = document.getElementById("ai-" + a.id); if(el) el.focus(); }, 0);
 });
 document.getElementById("q").addEventListener("input", renderUnis);
 document.getElementById("heroSearch").addEventListener("submit", function(ev){
@@ -796,16 +898,81 @@ document.getElementById("entryForm").addEventListener("submit", function(ev){
   document.getElementById("eText").value = "";
 });
 
+// ---------- journey road ----------
+const MILESTONES = [
+  ["Research", "Started researching", s => s.entries.length > 0 || s.shortlist.length > 0 || s.apps.length > 0],
+  ["Shortlist", "Shortlisted a university", s => s.shortlist.length > 0],
+  ["Applications", "Added an application", s => s.apps.length > 0],
+  ["Documents", "Shared documents half ready", s => CHECK.filter(c => s.checked[c[0]]).length >= Math.ceil(CHECK.length / 2)],
+  ["Statement", "Wrote a personal statement", s => s.apps.some(a => a.checked && a.checked.statement)],
+  ["Applied", "Submitted an application", s => s.apps.some(a => a.checked && a.checked.submitted) || s.entries.some(e => e.kind === "Applied")],
+  ["Decision", "Heard back", s => s.apps.some(a => a.checked && a.checked.decision) || s.entries.some(e => e.kind === "Interview" || e.kind === "Offer" || e.kind === "Rejected")],
+  ["Offer", "Accepted an offer", s => s.apps.some(a => a.checked && a.checked.accepted) || s.entries.some(e => e.kind === "Offer")],
+  ["CAS & visa", "Got your CAS and visa", s => s.apps.some(a => a.checked && a.checked.cas) && !!s.checked.visa]
+];
+const BEAVER = '<g class="beaver">'
+ + '<ellipse cx="60" cy="134" rx="34" ry="6" fill="#2b1d14" opacity=".18"/>'
+ + '<g transform="rotate(-28 92 112)"><ellipse cx="100" cy="112" rx="13" ry="25" fill="#6b3f22" stroke="#2b1d14" stroke-width="3"/><path d="M92 100l16 8M92 110l16 8M92 120l16 8M96 92l-2 38M104 92l-2 38" stroke="#8d5631" stroke-width="2" fill="none"/></g>'
+ + '<ellipse cx="60" cy="100" rx="31" ry="32" fill="#b8692e" stroke="#2b1d14" stroke-width="3"/>'
+ + '<ellipse cx="60" cy="106" rx="18" ry="21" fill="#f3d6b0"/>'
+ + '<ellipse cx="44" cy="129" rx="10" ry="6" fill="#8d4f24" stroke="#2b1d14" stroke-width="2.5"/><ellipse cx="76" cy="129" rx="10" ry="6" fill="#8d4f24" stroke="#2b1d14" stroke-width="2.5"/>'
+ + '<path d="M33 92q-12 4-8 18" stroke="#2b1d14" stroke-width="3" fill="#b8692e"/><path d="M87 88q14-10 18-24" stroke="#2b1d14" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="105" cy="62" r="6" fill="#b8692e" stroke="#2b1d14" stroke-width="2.5"/>'
+ + '<circle cx="34" cy="34" r="8" fill="#8d4f24" stroke="#2b1d14" stroke-width="3"/><circle cx="86" cy="34" r="8" fill="#8d4f24" stroke="#2b1d14" stroke-width="3"/>'
+ + '<circle cx="60" cy="54" r="28" fill="#b8692e" stroke="#2b1d14" stroke-width="3"/>'
+ + '<ellipse cx="60" cy="66" rx="15" ry="11" fill="#f3d6b0"/>'
+ + '<circle cx="48" cy="50" r="4.5" fill="#2b1d14"/><circle cx="49.5" cy="48.5" r="1.5" fill="#fff"/><circle cx="72" cy="50" r="4.5" fill="#2b1d14"/><circle cx="73.5" cy="48.5" r="1.5" fill="#fff"/>'
+ + '<ellipse cx="40" cy="60" rx="4" ry="2.5" fill="#e8907a" opacity=".7"/><ellipse cx="80" cy="60" rx="4" ry="2.5" fill="#e8907a" opacity=".7"/>'
+ + '<ellipse cx="60" cy="60" rx="5.5" ry="3.8" fill="#2b1d14"/>'
+ + '<rect x="55" y="68" width="10" height="9" rx="1.5" fill="#fff" stroke="#2b1d14" stroke-width="2"/><path d="M60 68v9" stroke="#2b1d14" stroke-width="1.5"/>'
+ + '<path d="M28 26L60 14l32 12-32 12z" fill="#2b1d14"/><path d="M44 32v8c8 4 24 4 32 0v-8" fill="#3d2a1d"/>'
+ + '<path d="M86 28v14" stroke="#a8d08d" stroke-width="3"/><circle cx="86" cy="44" r="3.5" fill="#a8d08d"/>'
+ + '</g>';
+function renderJourney(){
+  const box = document.getElementById("journey"); if(!box) return;
+  let reached = -1; const doneArr = MILESTONES.map(m => !!m[2](state));
+  doneArr.forEach((ok, i) => { if(ok) reached = i; });
+  const count = doneArr.filter(Boolean).length;
+  const W = 1000, H = 270;
+  const d = "M30,190 C120,190 140,95 250,95 S380,190 500,190 S630,95 750,95 S880,175 975,165";
+  box.innerHTML = '<div class="journey-head"><div><h3>Your journey</h3><p class="note">'
+    + (reached < 0 ? "Every application starts with research. Shortlist a university or write a diary entry to set off."
+       : reached === MILESTONES.length - 1 ? "You've reached the end of the road. Congratulations, and good luck in the UK!"
+       : "You're at <strong>" + MILESTONES[reached][0] + "</strong>. Next stop: " + MILESTONES[reached + 1][1].toLowerCase() + ".")
+    + '</p></div><div class="journey-count">'+count+' of '+MILESTONES.length+' stops done</div></div>'
+    + '<div class="road-scroll"><svg class="road" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Application journey: '+count+' of '+MILESTONES.length+' milestones done">'
+    + '<rect x="0" y="0" width="'+W+'" height="'+H+'" rx="18" fill="#a8d08d"/>'
+    + '<g opacity=".5" fill="#8fbf70"><ellipse cx="160" cy="215" rx="90" ry="22"/><ellipse cx="620" cy="30" rx="110" ry="20"/><ellipse cx="880" cy="220" rx="80" ry="18"/></g>'
+    + [[110,70],[380,55],[640,232],[860,70],[520,60],[60,245]].map(([x,y]) => '<g><rect x="'+(x-3)+'" y="'+(y+6)+'" width="6" height="12" fill="#6b3f22"/><circle cx="'+x+'" cy="'+y+'" r="13" fill="#5f8f45"/><circle cx="'+(x+7)+'" cy="'+(y+4)+'" r="9" fill="#6f9f52"/></g>').join("")
+    + '<path id="roadPath" d="'+d+'" fill="none" stroke="#e7d3b1" stroke-width="40" stroke-linecap="round"/>'
+    + '<path d="'+d+'" fill="none" stroke="#d2b98f" stroke-width="40" stroke-linecap="round" opacity=".35" transform="translate(0,3)"/>'
+    + '<path d="'+d+'" fill="none" stroke="#fffdf9" stroke-width="3" stroke-dasharray="12 12" stroke-linecap="round"/>'
+    + '<g id="stops"></g><g id="beaverSpot"></g></svg></div>';
+  const path = box.querySelector("#roadPath"), L = path.getTotalLength(), n = MILESTONES.length;
+  let stops = "";
+  const pts = MILESTONES.map((m, i) => { const p = path.getPointAtLength(L * (0.03 + 0.94 * i / (n - 1))); return {x: p.x, y: p.y}; });
+  pts.forEach((p, i) => {
+    const done = doneArr[i], above = p.y > 120 && i !== reached;
+    const ly = above ? p.y - 26 : p.y + 38;
+    stops += '<g class="stop'+(done?" done":"")+'"><circle cx="'+p.x+'" cy="'+p.y+'" r="13" fill="'+(done?"#4e7d32":"#fffdf9")+'" stroke="#2b1d14" stroke-width="3"/>'
+      + (done ? '<path d="M'+(p.x-5)+','+p.y+' l4,4 l7,-8" stroke="#fffdf9" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>' : '<text x="'+p.x+'" y="'+(p.y+4.5)+'" text-anchor="middle" font-size="12" font-weight="900" fill="#2b1d14">'+(i+1)+'</text>')
+      + '<text x="'+p.x+'" y="'+ly+'" text-anchor="middle" class="stop-label">'+esc(MILESTONES[i][0])+'</text></g>';
+  });
+  box.querySelector("#stops").innerHTML = stops;
+  const at = reached < 0 ? {x: 40, y: 190} : pts[reached];
+  box.querySelector("#beaverSpot").innerHTML = '<g transform="translate('+(at.x - 44)+','+(at.y - 106)+') scale(.72)">' + BEAVER + '</g>';
+}
+
 // ---------- accounts (Supabase) ----------
 // Used when the page runs outside claude.ai (e.g. on GitHub Pages). The key below is the public
 // "anon" key: it is safe in browser code because Row Level Security limits each user to their own rows.
 const SB_URL = "https://hlemoqunefivhxzashze.supabase.co";
 const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhsZW1vcXVuZWZpdmh4emFzaHplIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQxODQ2MTQsImV4cCI6MjEwOTc2MDYxNH0.LKCkfrOBNBjq1_ic5swg_wFME-AoPtizs1dduJFwtQU";
 let sb = null, user = null, prefTimer = null, authMode = "signup", sessionSeen = false;
-const blank = () => ({entries:[], shortlist:[], checked:{}});
+const blank = () => ({entries:[], shortlist:[], checked:{}, apps:[]});
 function isGuest(){ return mode === "cloud" && !!sb && !user; }
 const NUDGE = {
   shortlist: "<strong>Added to your shortlist</strong> on this device only. Log in to see your shortlist again on any device.",
+  apps: "<strong>Application added</strong> on this device only. Log in to keep your applications and checklists on any device.",
   diary: "<strong>Entry saved</strong> on this device only. Log in to view your diary again on any device.",
   checklist: "<strong>Ticked</strong> on this device only. Log in to keep your checklist on any device."
 };
@@ -819,6 +986,31 @@ function guestNudge(kind){
 }
 const signedIn = () => mode === "cloud" && sb && user;
 const hereURL = () => location.origin + location.pathname;
+const fromAppRow = r => ({ id: r.id, uni: r.uni, course: r.course, deadline: r.deadline || "", checked: r.checked || {}, custom: r.custom || [], created: r.created_at });
+const appTimers = {};
+function addApp(a){
+  state.apps.push(a); renderAll();
+  if(!signedIn()){ if(mode === "cloud"){ localMsg(); guestNudge("apps"); } else scheduleSave(); return; }
+  setSaveMsg("Saving…");
+  sb.from("applications").insert({ uni: a.uni, course: a.course, deadline: a.deadline || null, checked: a.checked, custom: a.custom }).select().single().then(({data, error}) => {
+    if(error){ state.apps = state.apps.filter(x => x.id !== a.id); renderAll(); document.getElementById("appNote").textContent = "Couldn't save that application: " + error.message; return; }
+    state.apps = state.apps.map(x => x.id === a.id ? fromAppRow(data) : x); renderAll(); setSaveMsg("Saved to your account.");
+  });
+}
+function updateApp(id){
+  if(!signedIn()){ if(mode === "cloud") localMsg(); else scheduleSave(); return; }
+  clearTimeout(appTimers[id]);
+  appTimers[id] = setTimeout(() => {
+    const a = state.apps.find(x => x.id === id); if(!a) return;
+    sb.from("applications").update({ checked: a.checked, custom: a.custom }).eq("id", id).then(({error}) => setSaveMsg(error ? "Couldn't save: " + error.message : "Saved to your account."));
+  }, 600);
+}
+function removeApp(id){
+  const before = state.apps;
+  state.apps = state.apps.filter(a => a.id !== id); renderAll();
+  if(!signedIn()){ if(mode === "cloud") localMsg(); else scheduleSave(); return; }
+  sb.from("applications").delete().eq("id", id).then(({error}) => { if(error){ state.apps = before; renderAll(); setSaveMsg("Couldn't delete: " + error.message); } else setSaveMsg("Saved to your account."); });
+}
 const fromRow = r => ({ id: r.id, date: r.entry_date, uni: r.uni || "", kind: r.kind, text: r.body, created: r.created_at });
 
 function readLocal(){ try { const raw = localStorage.getItem(LSKEY); return raw ? JSON.parse(raw) : null; } catch(e){ return null; } }
@@ -851,15 +1043,21 @@ function persistPrefs(kind){
 
 async function loadCloud(){
   setSaveMsg("Loading your journal…");
-  const [er, sr] = await Promise.all([
+  const [er, sr, ar] = await Promise.all([
     sb.from("diary_entries").select("*").order("entry_date", {ascending:false}),
-    sb.from("user_state").select("*").maybeSingle()
+    sb.from("user_state").select("*").maybeSingle(),
+    sb.from("applications").select("*").order("created_at")
   ]);
-  if(er.error || sr.error){ setSaveMsg("Couldn't load your journal. Refresh to try again."); return; }
-  const next = { entries: er.data.map(fromRow), shortlist: (sr.data && sr.data.shortlist) || [], checked: (sr.data && sr.data.checked) || {} };
+  if(er.error || sr.error || ar.error){ setSaveMsg("Couldn't load your journal. Refresh to try again."); return; }
+  const next = { entries: er.data.map(fromRow), shortlist: (sr.data && sr.data.shortlist) || [], checked: (sr.data && sr.data.checked) || {}, apps: ar.data.map(fromAppRow) };
   // Move anything saved in this browser before logging in into the account, once.
   const loc = readLocal(), moved = loc ? (loc.entries || []).length : 0;
-  if(loc && (moved || (loc.shortlist || []).length || Object.keys(loc.checked || {}).length)){
+  const movedApps = loc ? (loc.apps || []).length : 0;
+  if(loc && (moved || movedApps || (loc.shortlist || []).length || Object.keys(loc.checked || {}).length)){
+    if(movedApps){
+      const ins = await sb.from("applications").insert(loc.apps.map(a => ({ uni: a.uni, course: a.course, deadline: a.deadline || null, checked: a.checked || {}, custom: a.custom || [] }))).select();
+      if(!ins.error) next.apps = next.apps.concat(ins.data.map(fromAppRow));
+    }
     if(moved){
       const ins = await sb.from("diary_entries").insert(loc.entries.map(e => ({ entry_date: e.date, uni: e.uni || "", kind: e.kind, body: e.text }))).select();
       if(!ins.error) next.entries = next.entries.concat(ins.data.map(fromRow));

@@ -556,16 +556,11 @@ footer a{text-decoration:none} footer a:hover{text-decoration:underline;color:#f
 </dialog>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
-<script type="application/json" id="state">{"entries":[{"id":"e1","date":"2026-11-09","uni":"","kind":"Note","text":"Started this journal. Looking at UK universities for September 2027 entry and building a shortlist."}],"shortlist":[],"checked":{}}</script>
+<script type="application/json" id="state">{"entries":[],"shortlist":[],"checked":{}}</script>
 
 <script>
 (function(){
 "use strict";
-const PRISTINE = (function(){
-  const root = document.documentElement.cloneNode(true);
-  root.removeAttribute("data-theme");
-  return "<!DOCTYPE html>\n" + root.outerHTML;
-})();
 
 const UNIS = [
  {id:"oxford",name:"University of Oxford",city:"Oxford",sys:"fixed",
@@ -763,30 +758,12 @@ function normalize(s){
   return s;
 }
 state = normalize(state);
-let artifactApi = null, mode = "pending", saveTimer = null;
+let mode = "pending";
 const LSKEY = "uk-masters-journal-v1";
 function setSaveMsg(t){ const el = document.getElementById("saveState"); if(el) el.textContent = t; }
 function loadLocal(){ try { const raw = localStorage.getItem(LSKEY); if(raw){ const s = JSON.parse(raw); if(s && s.entries) state = s; } } catch(e){} }
 function saveLocal(){ try { localStorage.setItem(LSKEY, JSON.stringify(state)); return true; } catch(e){ return false; } }
-function buildDoc(){
-  const json = JSON.stringify(state).replace(/</g,"\\u003c");
-  return PRISTINE.replace(/(<script type="application\/json" id="state">)[\s\S]*?(<\/script>)/, function(_, a, b){ return a + json + b; });
-}
-function scheduleSave(){
-  if(mode === "artifact"){
-    setSaveMsg("Saving…");
-    clearTimeout(saveTimer);
-    saveTimer = setTimeout(async function(){
-      try { await artifactApi.publish(buildDoc()); setSaveMsg("Saved to this page."); }
-      catch(err){
-        const code = (err && (err.code || err.message)) || "";
-        if(/not_granted|not_writer/.test(code)){ mode = "readonly"; setSaveMsg("This copy is read-only, so changes aren't kept."); }
-        else if(/conflict/.test(code)){ setSaveMsg("The page was updated elsewhere; reloading."); }
-        else { setSaveMsg(saveLocal() ? "Couldn't save to the page; kept in this browser for now." : "Couldn't save this change."); }
-      }
-    }, 1200);
-  } else { setSaveMsg(saveLocal() ? "Saved in this browser only." : "Changes can't be saved in this view."); }
-}
+function scheduleSave(){ setSaveMsg(saveLocal() ? "Saved in this browser only." : "Changes can't be saved in this view."); }
 
 // ---------- helpers ----------
 const today = new Date(); today.setHours(0,0,0,0);
@@ -1131,7 +1108,7 @@ function renderJourney(){
 }
 
 // ---------- accounts (Supabase) ----------
-// Used when the page runs outside claude.ai (e.g. on GitHub Pages). The key below is the public
+// Accounts and cloud saving (Supabase). The key below is the public
 // "anon" key: it is safe in browser code because Row Level Security limits each user to their own rows.
 const SB_URL = "https://hlemoqunefivhxzashze.supabase.co";
 const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhsZW1vcXVuZWZpdmh4emFzaHplIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQxODQ2MTQsImV4cCI6MjEwOTc2MDYxNH0.LKCkfrOBNBjq1_ic5swg_wFME-AoPtizs1dduJFwtQU";
@@ -1404,11 +1381,7 @@ function watchCards(){
   document.getElementById("eDate").value = iso;
   renderDiaryOptions(); renderAll();
   setSaveMsg("Connecting…");
-  if(!(window.claude && typeof window.claude.use === "function")){ startCloud(); return; }
-  Promise.resolve(window.claude.use("artifact")).then(function(api){
-    if(api){ artifactApi = api; mode = "artifact"; setSaveMsg("Entries are saved to this page."); }
-    else { mode = "local"; loadLocal(); renderAll(); setSaveMsg("Saved in this browser only."); }
-  }).catch(function(){ mode = "local"; loadLocal(); renderAll(); setSaveMsg("Saved in this browser only."); });
+  startCloud();
 })();
 })();
 </script>
